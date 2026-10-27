@@ -262,17 +262,6 @@ class VisitorDetailsScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        Center(
-                          child: Text(
-                            'ID: ${currentVisitor.id}',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                        ),
                         const SizedBox(height: 16),
                       ],
                     ),
