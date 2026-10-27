@@ -82,5 +82,20 @@ void main() {
       expect(Validators.validateEmail('invalid-email'), isNotNull);
       expect(Validators.validateEmail('user@test.com'), isNull);
     });
+
+    test('validateUsername validates non-empty', () {
+      expect(Validators.validateUsername(''), isNotNull);
+      expect(Validators.validateUsername('   '), isNotNull);
+      expect(Validators.validateUsername('admin'), isNull);
+    });
+
+    test('validatePassword requires uppercase, number, and special character', () {
+      expect(Validators.validatePassword(''), isNotNull);
+      expect(Validators.validatePassword('lowercase1@'), isNotNull); // no uppercase
+      expect(Validators.validatePassword('UPPERCASE@'), isNotNull);  // no number
+      expect(Validators.validatePassword('Uppercase1'), isNotNull);  // no special char
+      expect(Validators.validatePassword('Pass@123'), isNull);       // valid!
+      expect(Validators.validatePassword('Admin#2026'), isNull);     // valid!
+    });
   });
 }

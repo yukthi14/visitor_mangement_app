@@ -29,10 +29,14 @@ class AppConstants {
   static const String welcomeBack = 'Welcome back!';
   static const String labelUsername = 'Username';
   static const String labelPassword = 'Password';
+  static const String labelRememberMe = 'Remember me';
   static const String labelLogin = 'Login';
   static const String labelLogOut = 'Log Out';
   static const String errorEnterUsername = 'Please enter your username';
   static const String errorEnterPassword = 'Please enter your password';
+  static const String errorPasswordUppercase = 'Password must contain at least one uppercase letter';
+  static const String errorPasswordNumber = 'Password must contain at least one number';
+  static const String errorPasswordSpecialChar = 'Password must contain at least one special character';
   static const String hintUsername = 'Enter username';
   static const String hintPassword = 'Enter password';
 
@@ -164,4 +168,6 @@ class AppConstants {
   static const String prefCachedVisitors = 'pref_cached_visitors';
   static const String prefIsLoggedIn = 'pref_is_logged_in';
   static const String prefLoggedUser = 'pref_logged_user';
+  static const String prefRememberMe = 'pref_remember_me';
+  static const String prefRememberedUsername = 'pref_remembered_username';
 }

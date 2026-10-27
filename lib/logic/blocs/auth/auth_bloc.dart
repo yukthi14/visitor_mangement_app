@@ -30,14 +30,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     await Future.delayed(const Duration(milliseconds: 600)); // Smooth UX transition
 
     final cleanUser = event.username.trim();
-    final cleanPass = event.password.trim();
+    final cleanPass = event.password;
 
     if (cleanUser.isEmpty) {
-      emit(const AuthFailure('Please enter your username'));
+      emit(const AuthFailure(AppConstants.errorEnterUsername));
       return;
     }
     if (cleanPass.isEmpty) {
-      emit(const AuthFailure('Please enter your password'));
+      emit(const AuthFailure(AppConstants.errorEnterPassword));
+      return;
+    }
+    if (!RegExp(r'[A-Z]').hasMatch(cleanPass)) {
+      emit(const AuthFailure(AppConstants.errorPasswordUppercase));
+      return;
+    }
+    if (!RegExp(r'[0-9]').hasMatch(cleanPass)) {
+      emit(const AuthFailure(AppConstants.errorPasswordNumber));
+      return;
+    }
+    if (!RegExp(r'[^a-zA-Z0-9\s]').hasMatch(cleanPass)) {
+      emit(const AuthFailure(AppConstants.errorPasswordSpecialChar));
       return;
     }
 

@@ -1,3 +1,5 @@
+import '../constants/app_constants.dart';
+
 class Validators {
   static String? validateName(String? value) {
     if (value == null || value.trim().isEmpty) {
@@ -35,6 +37,29 @@ class Validators {
   static String? validateRequired(String? value, String fieldName) {
     if (value == null || value.trim().isEmpty) {
       return '$fieldName is required';
+    }
+    return null;
+  }
+
+  static String? validateUsername(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return AppConstants.errorEnterUsername;
+    }
+    return null;
+  }
+
+  static String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return AppConstants.errorEnterPassword;
+    }
+    if (!RegExp(r'[A-Z]').hasMatch(value)) {
+      return AppConstants.errorPasswordUppercase;
+    }
+    if (!RegExp(r'[0-9]').hasMatch(value)) {
+      return AppConstants.errorPasswordNumber;
+    }
+    if (!RegExp(r'[^a-zA-Z0-9\s]').hasMatch(value)) {
+      return AppConstants.errorPasswordSpecialChar;
     }
     return null;
   }
