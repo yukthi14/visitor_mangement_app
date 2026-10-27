@@ -10,6 +10,7 @@ import '../../../logic/blocs/visitor/visitor_bloc.dart';
 import '../../../logic/blocs/visitor/visitor_event.dart';
 import '../../../logic/blocs/visitor/visitor_state.dart';
 import '../success/status_success_screen.dart';
+import 'qr_display_screen.dart';
 import 'register_visitor_screen.dart';
 
 class VisitorDetailsScreen extends StatelessWidget {
@@ -216,17 +217,48 @@ class VisitorDetailsScreen extends StatelessWidget {
 
                         // QR Code Box
                         Center(
-                          child: Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: AppColors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: AppColors.border),
-                            ),
-                            child: QrImageView(
-                              data: currentVisitor.id,
-                              version: QrVersions.auto,
-                              size: 150.0,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(12),
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => QRDisplayScreen(visitor: currentVisitor),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: AppColors.border),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  QrImageView(
+                                    data: currentVisitor.id,
+                                    version: QrVersions.auto,
+                                    size: 150.0,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: const [
+                                      Icon(Icons.download_rounded, size: 14, color: AppColors.primary),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        'Tap to View / Download QR',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: AppColors.primary,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
