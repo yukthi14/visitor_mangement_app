@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/date_formatter.dart';
+import '../../../core/widgets/shimmer_loading.dart';
 import '../../../core/widgets/stat_card.dart';
 import '../../../logic/blocs/visitor/visitor_bloc.dart';
 import '../../../logic/blocs/visitor/visitor_event.dart';
@@ -23,7 +24,7 @@ class DashboardScreen extends StatelessWidget {
   }) {
     return Expanded(
       child: Material(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
@@ -109,17 +110,17 @@ class DashboardScreen extends StatelessWidget {
                 children: const [
                   CircleAvatar(
                     radius: 28,
-                    backgroundColor: Colors.white,
+                    backgroundColor: AppColors.white,
                     child: Icon(Icons.person, color: AppColors.primary, size: 36),
                   ),
                   SizedBox(height: 12),
                   Text(
                     'Front Desk Security',
-                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: AppColors.white, fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     'admin@realestate.com',
-                    style: TextStyle(color: Colors.white70, fontSize: 13),
+                    style: TextStyle(color: AppColors.whiteOpacity70, fontSize: 13),
                   ),
                 ],
               ),
@@ -170,6 +171,10 @@ class DashboardScreen extends StatelessWidget {
       ),
       body: BlocBuilder<VisitorBloc, VisitorState>(
         builder: (context, state) {
+          if (state is VisitorLoading) {
+            return const DashboardShimmer();
+          }
+
           int totalToday = 0;
           int checkedIn = 0;
           int checkedOut = 0;
@@ -194,7 +199,7 @@ class DashboardScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.white,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: AppColors.border),
                     ),
@@ -260,7 +265,7 @@ class DashboardScreen extends StatelessWidget {
                         title: 'Register\nVisitor',
                         icon: Icons.add,
                         iconBgColor: AppColors.primary,
-                        iconColor: Colors.white,
+                        iconColor: AppColors.white,
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
@@ -275,8 +280,8 @@ class DashboardScreen extends StatelessWidget {
                       _buildQuickActionItem(
                         title: 'Visitor\nList',
                         icon: Icons.format_list_bulleted_rounded,
-                        iconBgColor: const Color(0xFF16A34A),
-                        iconColor: Colors.white,
+                        iconBgColor: AppColors.statusCheckedInText,
+                        iconColor: AppColors.white,
                         onTap: () {
                           if (onNavigateToTab != null) {
                             onNavigateToTab!(1);
@@ -289,8 +294,8 @@ class DashboardScreen extends StatelessWidget {
                       _buildQuickActionItem(
                         title: 'Scan\nQR Code',
                         icon: Icons.qr_code_scanner_rounded,
-                        iconBgColor: const Color(0xFF7C3AED),
-                        iconColor: Colors.white,
+                        iconBgColor: AppColors.statusCheckedOutText,
+                        iconColor: AppColors.white,
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(

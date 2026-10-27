@@ -194,7 +194,7 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
           : null,
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
+        foregroundColor: AppColors.white,
         child: const Icon(Icons.person_add_alt_1),
         onPressed: () {
           Navigator.of(context).push(
@@ -208,7 +208,7 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.successMessage!),
-                backgroundColor: const Color(0xFF16A34A),
+                backgroundColor: AppColors.success,
               ),
             );
           }
@@ -235,11 +235,11 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
               children: [
                 // Search Input Field
                 Container(
-                  color: Colors.white,
+                  color: AppColors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF1F5F9),
+                      color: AppColors.inputFillDisabled,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: TextField(

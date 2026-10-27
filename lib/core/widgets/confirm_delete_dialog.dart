@@ -34,7 +34,7 @@ class ConfirmDeleteDialog extends StatelessWidget {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 0,
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         child: Column(
@@ -45,13 +45,13 @@ class ConfirmDeleteDialog extends StatelessWidget {
               width: 54,
               height: 54,
               decoration: BoxDecoration(
-                color: const Color(0xFFFFF3E0),
+                color: AppColors.warningBg,
                 shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFFFFB74D), width: 1.5),
+                border: Border.all(color: AppColors.warningBorder, width: 1.5),
               ),
               child: const Icon(
                 Icons.priority_high_rounded,
-                color: Color(0xFFF57C00),
+                color: AppColors.warningIcon,
                 size: 32,
               ),
             ),
@@ -111,8 +111,8 @@ class ConfirmDeleteDialog extends StatelessWidget {
                       onConfirm();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFEA3D3D),
-                      foregroundColor: Colors.white,
+                      backgroundColor: AppColors.dangerButton,
+                      foregroundColor: AppColors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),

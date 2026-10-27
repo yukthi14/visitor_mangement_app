@@ -1,14 +1,30 @@
 import 'package:flutter/material.dart';
 
+/// Centralized color palette for the entire application.
+/// All colors must be sourced from here to maintain consistency.
 class AppColors {
   // Primary brand colors
   static const Color primary = Color(0xFF1E5AE6);
   static const Color primaryDark = Color(0xFF1442B5);
   static const Color primaryLight = Color(0xFFEBF2FF);
+  static const Color splashBg = Color(0xFF1E52D5);
 
-  // Background colors
+  // Background and Surface
   static const Color background = Color(0xFFF7F9FC);
-  static const Color surface = Colors.white;
+  static const Color surface = Color(0xFFFFFFFF);
+  static const Color white = Color(0xFFFFFFFF);
+  static const Color black = Color(0xFF000000);
+  static const Color transparent = Color(0x00000000);
+
+  // Opacity variations
+  static const Color whiteOpacity12 = Color(0x1FFFFFFF);
+  static const Color whiteOpacity25 = Color(0x40FFFFFF);
+  static const Color whiteOpacity54 = Color(0x8AFFFFFF);
+  static const Color whiteOpacity70 = Color(0xB3FFFFFF);
+  static const Color whiteOpacity85 = Color(0xD9FFFFFF);
+  static const Color blackOpacity04 = Color(0x0A000000);
+  static const Color blackOpacity54 = Color(0x8A000000);
+  static const Color blackOpacity70 = Color(0xB3000000);
 
   // Text colors
   static const Color textPrimary = Color(0xFF1E293B);
@@ -18,6 +34,11 @@ class AppColors {
   // Border & Divider
   static const Color border = Color(0xFFE2E8F0);
   static const Color divider = Color(0xFFEEF2F6);
+
+  // Input & Component backgrounds
+  static const Color inputFill = Color(0xFFF8FAFC);
+  static const Color inputFillDisabled = Color(0xFFF1F5F9);
+  static const Color avatarBg = Color(0xFFE2E8F8);
 
   // Status Colors
   // Registered (Blue)
@@ -45,9 +66,28 @@ class AppColors {
   static const Color metricPurpleBorder = Color(0xFFF3E8FF);
   static const Color metricPurpleText = Color(0xFF7E22CE);
 
-  // Danger / Warning
+  // Success, Danger, Warning
+  static const Color success = Color(0xFF16A34A);
+  static const Color successLight = Color(0xFFDCFCE7);
+
   static const Color danger = Color(0xFFEF4444);
   static const Color dangerBg = Color(0xFFFEF2F2);
+  static const Color dangerButton = Color(0xFFEA3D3D);
+
   static const Color warning = Color(0xFFF59E0B);
-  static const Color warningBg = Color(0xFFFFFBEB);
+  static const Color warningBg = Color(0xFFFFF3E0);
+  static const Color warningBorder = Color(0xFFFFB74D);
+  static const Color warningIcon = Color(0xFFF57C00);
+
+  // Scanner & Camera
+  static const Color scannerFrame = Color(0xFF38BDF8);
+
+  // Chart & Visuals
+  static const Color chartGrid = Color(0xFFE2E8F0);
+  static const Color purpleLight = Color(0xFFC4B5FD);
+
+  // Shimmer Effect Colors
+  static const Color shimmerBase = Color(0xFFE2E8F0);
+  static const Color shimmerHighlight = Color(0xFFF8FAFC);
+  static const Color shimmerCardBg = Color(0xFFF1F5F9);
 }

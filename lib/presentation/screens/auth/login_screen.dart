@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       body: SafeArea(
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Username Field
                   Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF8FAFC),
+                      color: AppColors.inputFill,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: AppColors.border),
                     ),
@@ -153,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Password Field
                   Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF8FAFC),
+                      color: AppColors.inputFill,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: AppColors.border),
                     ),
@@ -190,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: isLoading ? null : _onLogin,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
+                      foregroundColor: AppColors.white,
                       elevation: 0,
                       minimumSize: const Size.fromHeight(50),
                       shape: RoundedRectangleBorder(
@@ -203,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             height: 22,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Colors.white,
+                              color: AppColors.white,
                             ),
                           )
                         : const Text(

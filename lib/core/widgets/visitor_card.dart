@@ -22,12 +22,12 @@ class VisitorCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.border, width: 1),
       ),
       child: Material(
-        color: Colors.transparent,
+        color: AppColors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: onTap,
@@ -41,7 +41,7 @@ class VisitorCard extends StatelessWidget {
                   width: 44,
                   height: 44,
                   decoration: const BoxDecoration(
-                    color: Color(0xFFE2E8F8),
+                    color: AppColors.avatarBg,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(

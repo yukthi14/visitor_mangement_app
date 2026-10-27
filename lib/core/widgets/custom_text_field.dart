@@ -74,7 +74,7 @@ class CustomTextField extends StatelessWidget {
             prefixIcon: prefixIcon,
             suffixIcon: suffixIcon,
             filled: true,
-            fillColor: readOnly ? const Color(0xFFF1F5F9) : Colors.white,
+            fillColor: readOnly ? AppColors.inputFillDisabled : AppColors.white,
           ),
         ),
       ],

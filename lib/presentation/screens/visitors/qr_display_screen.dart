@@ -32,14 +32,14 @@ class QRDisplayScreen extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: AppColors.border),
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
+                      color: AppColors.blackOpacity04,
                       blurRadius: 10,
-                      offset: const Offset(0, 4),
+                      offset: Offset(0, 4),
                     ),
                   ],
                 ),
@@ -51,12 +51,12 @@ class QRDisplayScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       child: Container(
                         padding: const EdgeInsets.all(12),
-                        color: Colors.white,
+                        color: AppColors.white,
                         child: QrImageView(
                           data: visitor.id,
                           version: QrVersions.auto,
                           size: 200.0,
-                          backgroundColor: Colors.white,
+                          backgroundColor: AppColors.white,
                         ),
                       ),
                     ),
@@ -92,7 +92,7 @@ class QRDisplayScreen extends StatelessWidget {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('QR Code saved to gallery'),
-                                  backgroundColor: Color(0xFF16A34A),
+                                  backgroundColor: AppColors.success,
                                 ),
                               );
                             },
@@ -100,7 +100,7 @@ class QRDisplayScreen extends StatelessWidget {
                             label: const Text('Download'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primary,
-                              foregroundColor: Colors.white,
+                              foregroundColor: AppColors.white,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),

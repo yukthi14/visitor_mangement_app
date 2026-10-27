@@ -37,13 +37,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: AppColors.border, width: 1)),
-          boxShadow: [
+          color: AppColors.white,
+          border: const Border(top: BorderSide(color: AppColors.border, width: 1)),
+          boxShadow: const [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
+              color: AppColors.blackOpacity04,
               blurRadius: 8,
-              offset: const Offset(0, -2),
+              offset: Offset(0, -2),
             ),
           ],
         ),
@@ -51,9 +51,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           currentIndex: _currentIndex,
           onTap: _onTabTapped,
           type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.white,
           selectedItemColor: AppColors.primary,
-          unselectedItemColor: const Color(0xFF64748B),
+          unselectedItemColor: AppColors.textSecondary,
           selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
           unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
           elevation: 0,

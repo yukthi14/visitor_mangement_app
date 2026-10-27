@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'core/constants/app_colors.dart';
 import 'core/theme/app_theme.dart';
 import 'data/datasources/visitor_local_datasource.dart';
 import 'data/datasources/visitor_remote_datasource.dart';
@@ -20,7 +21,7 @@ void main() async {
   // Set system UI overlay style
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
+      statusBarColor: AppColors.transparent,
       statusBarIconBrightness: Brightness.light,
     ),
   );

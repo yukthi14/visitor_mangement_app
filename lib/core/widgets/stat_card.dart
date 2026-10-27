@@ -38,10 +38,10 @@ class StatCard extends StatelessWidget {
           width: 20,
           height: 20,
           decoration: const BoxDecoration(
-            color: Color(0xFF16A34A),
+            color: AppColors.statusCheckedInText,
             shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.check, size: 14, color: Colors.white),
+          child: const Icon(Icons.check, size: 14, color: AppColors.white),
         );
         break;
       case StatCardType.checkedOut:
@@ -49,7 +49,7 @@ class StatCard extends StatelessWidget {
         bgColor = AppColors.metricPurpleBg;
         borderColor = AppColors.metricPurpleBorder;
         countColor = AppColors.metricPurpleText;
-        iconWidget = const Icon(Icons.logout_rounded, size: 20, color: Color(0xFF7C3AED));
+        iconWidget = const Icon(Icons.logout_rounded, size: 20, color: AppColors.statusCheckedOutText);
         break;
     }
 

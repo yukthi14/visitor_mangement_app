@@ -52,9 +52,9 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
         final isSubmitting = state is VisitorLoaded && state.isSubmitting;
 
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.white,
           appBar: AppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.white,
             elevation: 0,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
@@ -81,7 +81,7 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF8FAFC),
+                      color: AppColors.inputFill,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: AppColors.border),
                     ),
@@ -92,7 +92,7 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
                           width: 68,
                           height: 68,
                           decoration: const BoxDecoration(
-                            color: Color(0xFFE2E8F8),
+                            color: AppColors.avatarBg,
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -151,7 +151,7 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
                   CustomButton(
                     text: 'Check In',
                     icon: Icons.login_rounded,
-                    backgroundColor: const Color(0xFF16A34A),
+                    backgroundColor: AppColors.statusCheckedInText,
                     isLoading: isSubmitting && state.operationType == 'check_in',
                     onPressed: currentVisitor.canCheckIn
                         ? () {
@@ -168,9 +168,9 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
                     text: 'Check Out',
                     icon: Icons.logout_rounded,
                     isOutlined: true,
-                    backgroundColor: Colors.white,
-                    textColor: const Color(0xFF7C3AED),
-                    borderColor: const Color(0xFFC4B5FD),
+                    backgroundColor: AppColors.white,
+                    textColor: AppColors.statusCheckedOutText,
+                    borderColor: AppColors.purpleLight,
                     isLoading: isSubmitting && state.operationType == 'check_out',
                     onPressed: currentVisitor.canCheckOut
                         ? () {

@@ -56,7 +56,7 @@ class CustomDropdown<T> extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hintText,
             filled: true,
-            fillColor: Colors.white,
+            fillColor: AppColors.white,
           ),
           hint: Text(
             hintText,

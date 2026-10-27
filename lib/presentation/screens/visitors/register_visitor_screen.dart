@@ -96,9 +96,9 @@ class _RegisterVisitorScreenState extends State<RegisterVisitorScreen> {
     final buttonText = isEditMode ? 'Update' : 'Save';
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         elevation: 0,
         centerTitle: false,
         leading: IconButton(
@@ -128,7 +128,7 @@ class _RegisterVisitorScreenState extends State<RegisterVisitorScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.successMessage!),
-                  backgroundColor: const Color(0xFF16A34A),
+                  backgroundColor: AppColors.success,
                 ),
               );
 

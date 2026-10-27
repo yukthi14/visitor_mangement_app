@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../logic/blocs/auth/auth_bloc.dart';
 import '../../../logic/blocs/auth/auth_event.dart';
 import '../../../logic/blocs/auth/auth_state.dart';
@@ -53,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E52D5),
+      backgroundColor: AppColors.splashBg,
       body: SafeArea(
         child: Column(
           children: [
@@ -67,8 +68,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   Container(
                     width: 110,
                     height: 110,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.12),
+                    decoration: const BoxDecoration(
+                      color: AppColors.whiteOpacity12,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -78,19 +79,19 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       const Icon(
                         Icons.person,
                         size: 64,
-                        color: Colors.white,
+                        color: AppColors.white,
                       ),
                       const SizedBox(width: 4),
                       Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white, width: 2),
+                          border: Border.all(color: AppColors.white, width: 2),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: const Icon(
                           Icons.badge_outlined,
                           size: 26,
-                          color: Colors.white,
+                          color: AppColors.white,
                         ),
                       ),
                     ],
@@ -104,7 +105,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             const Text(
               'Visitor Management',
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.white,
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.3,
@@ -113,10 +114,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             const SizedBox(height: 8),
 
             // Subtitle
-            Text(
+            const Text(
               'Safe Visits. Better Spaces.',
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.85),
+                color: AppColors.whiteOpacity85,
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
               ),
@@ -136,8 +137,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     builder: (context, child) {
                       return LinearProgressIndicator(
                         value: _progressController.value,
-                        backgroundColor: Colors.white.withValues(alpha: 0.25),
-                        valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                        backgroundColor: AppColors.whiteOpacity25,
+                        valueColor: const AlwaysStoppedAnimation<Color>(AppColors.white),
                       );
                     },
                   ),

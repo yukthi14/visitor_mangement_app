@@ -86,9 +86,9 @@ class VisitorDetailsScreen extends StatelessWidget {
         final isSubmitting = state is VisitorLoaded && state.isSubmitting;
 
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.white,
           appBar: AppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.white,
             elevation: 0,
             centerTitle: false,
             leading: IconButton(
@@ -117,7 +117,7 @@ class VisitorDetailsScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF8FAFC),
+                            color: AppColors.inputFill,
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(color: AppColors.border),
                           ),
@@ -127,7 +127,7 @@ class VisitorDetailsScreen extends StatelessWidget {
                                 width: 56,
                                 height: 56,
                                 decoration: const BoxDecoration(
-                                  color: Color(0xFFE2E8F8),
+                                  color: AppColors.avatarBg,
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -179,7 +179,7 @@ class VisitorDetailsScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: AppColors.white,
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(color: AppColors.border),
                           ),
@@ -219,7 +219,7 @@ class VisitorDetailsScreen extends StatelessWidget {
                           child: Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: AppColors.white,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(color: AppColors.border),
                             ),
@@ -259,7 +259,7 @@ class VisitorDetailsScreen extends StatelessWidget {
                           child: CustomButton(
                             text: 'Check In',
                             icon: Icons.login_rounded,
-                            backgroundColor: const Color(0xFF16A34A),
+                            backgroundColor: AppColors.statusCheckedInText,
                             isLoading: isSubmitting,
                             onPressed: () {
                               context.read<VisitorBloc>().add(
@@ -290,7 +290,7 @@ class VisitorDetailsScreen extends StatelessWidget {
                             height: 48,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF1F5F9),
+                              color: AppColors.inputFillDisabled,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Text(

@@ -50,7 +50,7 @@ class StatusSuccessScreen extends StatelessWidget {
         : (visitor.checkOutTime ?? DateFormatter.currentIsoTimestamp());
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -63,12 +63,12 @@ class StatusSuccessScreen extends StatelessWidget {
                 width: 76,
                 height: 76,
                 decoration: const BoxDecoration(
-                  color: Color(0xFF16A34A),
+                  color: AppColors.success,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.check,
-                  color: Colors.white,
+                  color: AppColors.white,
                   size: 44,
                 ),
               ),
@@ -115,7 +115,7 @@ class StatusSuccessScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF8FAFC),
+                  color: AppColors.inputFill,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(color: AppColors.border),
                 ),

@@ -8,23 +8,23 @@ class AppTheme {
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primary,
         primary: AppColors.primary,
-        onPrimary: Colors.white,
+        onPrimary: AppColors.white,
         surface: AppColors.background,
         error: AppColors.danger,
       ),
       scaffoldBackgroundColor: AppColors.background,
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
+        foregroundColor: AppColors.white,
         elevation: 0,
         centerTitle: true,
         titleTextStyle: TextStyle(
-          color: Colors.white,
+          color: AppColors.white,
           fontSize: 18,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.2,
         ),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: AppColors.white),
       ),
       cardTheme: CardThemeData(
         color: AppColors.surface,
@@ -37,7 +37,7 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppColors.white,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
@@ -71,7 +71,7 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.white,
           elevation: 0,
           minimumSize: const Size.fromHeight(48),
           shape: RoundedRectangleBorder(
@@ -98,7 +98,7 @@ class AppTheme {
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         elevation: 8,
         indicatorColor: AppColors.primaryLight,
         labelTextStyle: WidgetStateProperty.resolveWith((states) {

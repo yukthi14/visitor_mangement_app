@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/date_formatter.dart';
+import '../../../core/widgets/shimmer_loading.dart';
 import '../../../logic/blocs/auth/auth_bloc.dart';
 import '../../../logic/blocs/auth/auth_event.dart';
 import '../../../logic/blocs/visitor/visitor_bloc.dart';
@@ -61,7 +62,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('API URL updated: $newUrl'),
-                    backgroundColor: const Color(0xFF16A34A),
+                    backgroundColor: AppColors.success,
                   ),
                 );
               }
@@ -107,6 +108,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           : null,
       body: BlocBuilder<VisitorBloc, VisitorState>(
         builder: (context, state) {
+          if (state is VisitorLoading) {
+            return const DashboardShimmer();
+          }
+
           int totalCustomers = 0;
           int totalVendors = 0;
           int totalOthers = 0;
@@ -136,7 +141,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.white,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: AppColors.border),
                   ),
@@ -167,7 +172,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.white,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(color: AppColors.border),
                   ),
@@ -178,9 +183,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _buildLegendItem(const Color(0xFF16A34A), 'Checked In'),
+                          _buildLegendItem(AppColors.statusCheckedInText, 'Checked In'),
                           const SizedBox(width: 24),
-                          _buildLegendItem(const Color(0xFF7C3AED), 'Checked Out'),
+                          _buildLegendItem(AppColors.statusCheckedOutText, 'Checked Out'),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -202,7 +207,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.white,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(color: AppColors.border),
                   ),
@@ -266,19 +271,19 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             child: Column(
                               children: [
                                 _buildTypeCountRow(
-                                  const Color(0xFF16A34A),
+                                  AppColors.statusCheckedInText,
                                   'Customer',
                                   totalCustomers > 0 ? totalCustomers : 8,
                                 ),
                                 const Divider(height: 16, color: AppColors.divider),
                                 _buildTypeCountRow(
-                                  const Color(0xFF1E5AE6),
+                                  AppColors.primary,
                                   'Vendor',
                                   totalVendors > 0 ? totalVendors : 5,
                                 ),
                                 const Divider(height: 16, color: AppColors.divider),
                                 _buildTypeCountRow(
-                                  const Color(0xFF94A3B8),
+                                  AppColors.textMuted,
                                   'Other',
                                   totalOthers > 0 ? totalOthers : 2,
                                 ),
@@ -296,7 +301,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.white,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(color: AppColors.border),
                   ),
@@ -336,7 +341,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             width: 8,
                             height: 8,
                             decoration: const BoxDecoration(
-                              color: Color(0xFF16A34A),
+                              color: AppColors.success,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -345,7 +350,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             'Persistent Storage Active',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Color(0xFF16A34A),
+                              color: AppColors.success,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -419,16 +424,15 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 class WeeklyBarChartPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final checkedInPaint = Paint()..color = const Color(0xFF16A34A);
-    final checkedOutPaint = Paint()..color = const Color(0xFF7C3AED);
+    final checkedInPaint = Paint()..color = AppColors.statusCheckedInText;
+    final checkedOutPaint = Paint()..color = AppColors.statusCheckedOutText;
     final gridPaint = Paint()
-      ..color = const Color(0xFFE2E8F0)
+      ..color = AppColors.chartGrid
       ..strokeWidth = 0.8;
 
     final textPainter = TextPainter(textDirection: TextDirection.ltr);
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    // Mock daily values for weekly activity
     final checkedInData = [6.0, 9.0, 8.0, 5.0, 7.0, 4.0, 5.0];
     final checkedOutData = [4.0, 7.0, 6.0, 9.0, 6.0, 8.0, 6.0];
 
@@ -451,7 +455,7 @@ class WeeklyBarChartPainter extends CustomPainter {
 
       textPainter.text = TextSpan(
         text: yVal.toString(),
-        style: const TextStyle(fontSize: 10, color: Color(0xFF94A3B8)),
+        style: const TextStyle(fontSize: 10, color: AppColors.textMuted),
       );
       textPainter.layout();
       textPainter.paint(canvas, Offset(chartLeft - textPainter.width - 6, y - 6));
@@ -492,7 +496,7 @@ class WeeklyBarChartPainter extends CustomPainter {
       // Day label
       textPainter.text = TextSpan(
         text: days[i],
-        style: const TextStyle(fontSize: 10, color: Color(0xFF64748B)),
+        style: const TextStyle(fontSize: 10, color: AppColors.textSecondary),
       );
       textPainter.layout();
       textPainter.paint(
@@ -527,19 +531,19 @@ class DonutChartPainter extends CustomPainter {
     const strokeWidth = 14.0;
 
     final paintCustomer = Paint()
-      ..color = const Color(0xFF16A34A)
+      ..color = AppColors.statusCheckedInText
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
 
     final paintVendor = Paint()
-      ..color = const Color(0xFF1E5AE6)
+      ..color = AppColors.primary
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
 
     final paintOther = Paint()
-      ..color = const Color(0xFF94A3B8)
+      ..color = AppColors.textMuted
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
