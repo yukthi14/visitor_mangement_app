@@ -62,9 +62,9 @@ void main() {
       ),
     );
 
-    // Initial check: Remember me checkbox is present
-    expect(find.byType(Checkbox), findsOneWidget);
-    expect(find.text('Remember me'), findsOneWidget);
+    // Verify Remember me checkbox is removed
+    expect(find.byType(Checkbox), findsNothing);
+    expect(find.text('Remember me'), findsNothing);
 
     // Tap Login without entering username or password
     await tester.tap(find.text('Login'));

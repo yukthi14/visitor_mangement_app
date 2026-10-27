@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/validators.dart';
@@ -20,17 +19,10 @@ class _LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
-  bool _rememberMe = false;
 
   String? _usernameError;
   String? _passwordError;
   String? _generalError;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSavedCredentials();
-  }
 
   @override
   void dispose() {
@@ -39,40 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  Future<void> _loadSavedCredentials() async {
-    final prefs = await SharedPreferences.getInstance();
-    final isRemembered = prefs.getBool(AppConstants.prefRememberMe) ?? false;
-    final savedUsername = prefs.getString(AppConstants.prefRememberedUsername) ?? '';
-
-    if (mounted && isRemembered) {
-      setState(() {
-        _rememberMe = true;
-        if (savedUsername.isNotEmpty) {
-          _usernameController.text = savedUsername;
-        }
-      });
-    }
-  }
-
-  Future<void> _onRememberMeChanged(bool? value) async {
-    final checked = value ?? false;
-    setState(() {
-      _rememberMe = checked;
-    });
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(AppConstants.prefRememberMe, checked);
-    if (checked) {
-      final currentUsername = _usernameController.text.trim();
-      if (currentUsername.isNotEmpty) {
-        await prefs.setString(AppConstants.prefRememberedUsername, currentUsername);
-      }
-    } else {
-      await prefs.remove(AppConstants.prefRememberedUsername);
-    }
-  }
-
-  void _onLogin() async {
+  void _onLogin() {
     final username = _usernameController.text.trim();
     final password = _passwordController.text;
 
@@ -94,23 +53,12 @@ class _LoginScreenState extends State<LoginScreen> {
       _generalError = null;
     });
 
-    final prefs = await SharedPreferences.getInstance();
-    if (_rememberMe) {
-      await prefs.setBool(AppConstants.prefRememberMe, true);
-      await prefs.setString(AppConstants.prefRememberedUsername, username);
-    } else {
-      await prefs.setBool(AppConstants.prefRememberMe, false);
-      await prefs.remove(AppConstants.prefRememberedUsername);
-    }
-
-    if (mounted) {
-      context.read<AuthBloc>().add(
-            LoginSubmitted(
-              username: username,
-              password: password,
-            ),
-          );
-    }
+    context.read<AuthBloc>().add(
+          LoginSubmitted(
+            username: username,
+            password: password,
+          ),
+        );
   }
 
   @override
@@ -208,11 +156,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (_usernameError != null) {
                         setState(() {
                           _usernameError = null;
-                        });
-                      }
-                      if (_rememberMe) {
-                        SharedPreferences.getInstance().then((prefs) {
-                          prefs.setString(AppConstants.prefRememberedUsername, val.trim());
                         });
                       }
                     },
@@ -353,39 +296,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ],
-                  const SizedBox(height: 12),
-
-                  // Remember Me Checkbox
-                  Row(
-                    children: [
-                      SizedBox(
-                        height: 24,
-                        width: 24,
-                        child: Checkbox(
-                          value: _rememberMe,
-                          activeColor: AppColors.primary,
-                          checkColor: AppColors.white,
-                          side: const BorderSide(color: AppColors.textSecondary, width: 1.5),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          onChanged: _onRememberMeChanged,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      GestureDetector(
-                        onTap: () => _onRememberMeChanged(!_rememberMe),
-                        child: const Text(
-                          AppConstants.labelRememberMe,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  const SizedBox(height: 8),
 
                   // General error if any
                   if (_generalError != null) ...[
