@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:equatable/equatable.dart';
 
 class VisitorModel extends Equatable {
@@ -108,6 +109,22 @@ class VisitorModel extends Equatable {
       'status': 'Checked Out',
       'check_out_time': time,
     };
+  }
+
+  /// Formats visitor data for QR encoding so scanning displays visitor ID, status, and details
+  String toQrData() {
+    return jsonEncode({
+      'visitor_id': id,
+      'name': name,
+      'status': status,
+      'mobile': mobile,
+      if (email != null && email!.isNotEmpty) 'email': email,
+      'visitor_type': visitorType,
+      'project': project,
+      'purpose': purpose,
+      if (checkInTime != null) 'check_in_time': checkInTime,
+      if (checkOutTime != null) 'check_out_time': checkOutTime,
+    });
   }
 
   @override

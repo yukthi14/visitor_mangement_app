@@ -77,6 +77,9 @@ class AppConstants {
   static const String labelCheckOutTime = 'Check-Out Time';
   static const String labelStatus = 'Status';
   static const String labelTotal = 'Total';
+  static const String labelExtractedVisitorId = 'Extract the visitor ID :';
+  static const String labelStatusWithColon = 'Status :';
+  static const String sectionOtherVisitorInfo = 'Other Visitor Information';
 
   // Form Buttons & Actions
   static const String cancel = 'Cancel';

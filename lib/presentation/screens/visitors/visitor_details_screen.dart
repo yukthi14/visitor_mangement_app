@@ -237,7 +237,7 @@ class VisitorDetailsScreen extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   QrImageView(
-                                    data: currentVisitor.id,
+                                    data: currentVisitor.toQrData(),
                                     version: QrVersions.auto,
                                     size: 150.0,
                                   ),

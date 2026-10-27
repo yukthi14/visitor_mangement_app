@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/utils/date_formatter.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/status_chip.dart';
 import '../../../data/models/visitor_model.dart';
@@ -15,6 +16,35 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
   final VisitorModel visitor;
 
   const ScannedVisitorInfoScreen({super.key, required this.visitor});
+
+  Widget _buildInfoRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 130,
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +83,7 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
         final isSubmitting = state is VisitorLoaded && state.isSubmitting;
 
         return Scaffold(
-          backgroundColor: AppColors.white,
+          backgroundColor: AppColors.background,
           appBar: AppBar(
             backgroundColor: AppColors.white,
             elevation: 0,
@@ -71,72 +101,81 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
             ),
           ),
           body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 20),
-
-                  // Visitor Card
+                  // Extracted Visitor ID Banner
                   Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     decoration: BoxDecoration(
-                      color: AppColors.inputFill,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: AppColors.border),
+                      color: AppColors.primaryLight,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.metricBlueBorder),
                     ),
-                    child: Column(
+                    child: Row(
                       children: [
-                        // Avatar
                         Container(
-                          width: 68,
-                          height: 68,
+                          padding: const EdgeInsets.all(6),
                           decoration: const BoxDecoration(
-                            color: AppColors.avatarBg,
+                            color: AppColors.white,
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
-                            Icons.person,
+                            Icons.qr_code_scanner_rounded,
                             color: AppColors.primary,
-                            size: 42,
+                            size: 20,
                           ),
                         ),
-                        const SizedBox(height: 14),
-
-                        // Name
-                        Text(
-                          currentVisitor.name,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                        const SizedBox(width: 12),
+                        const Text(
+                          AppConstants.labelExtractedVisitorId,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
                             color: AppColors.textPrimary,
                           ),
                         ),
-                        const SizedBox(height: 4),
-
-                        // Mobile
+                        const SizedBox(width: 8),
                         Text(
-                          currentVisitor.mobile,
+                          currentVisitor.id,
                           style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
 
-                        // Project & Type
-                        Text(
-                          '${currentVisitor.project}  •  ${currentVisitor.visitorType}',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: AppColors.textMuted,
-                          ),
+                  // Status Card
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: const [
+                            Icon(Icons.info_outline_rounded, color: AppColors.textSecondary, size: 20),
+                            SizedBox(width: 10),
+                            Text(
+                              AppConstants.labelStatusWithColon,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 14),
-
-                        // Status Chip
                         StatusChip(
                           status: currentVisitor.status,
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -145,8 +184,62 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 16),
 
-                  const SizedBox(height: 32),
+                  // Other Visitor Information Card
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          AppConstants.sectionOtherVisitorInfo,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        _buildInfoRow(AppConstants.labelVisitorName, currentVisitor.name),
+                        const Divider(height: 16, color: AppColors.divider),
+                        _buildInfoRow(AppConstants.labelMobileNumber, currentVisitor.mobile),
+                        const Divider(height: 16, color: AppColors.divider),
+                        _buildInfoRow(AppConstants.labelEmail, currentVisitor.email ?? '--'),
+                        const Divider(height: 16, color: AppColors.divider),
+                        _buildInfoRow(AppConstants.labelVisitorType, currentVisitor.visitorType),
+                        const Divider(height: 16, color: AppColors.divider),
+                        _buildInfoRow(AppConstants.labelProject, currentVisitor.project),
+                        const Divider(height: 16, color: AppColors.divider),
+                        _buildInfoRow(AppConstants.labelPurpose, currentVisitor.purpose),
+                        const Divider(height: 16, color: AppColors.divider),
+                        _buildInfoRow(
+                          AppConstants.labelRegisteredOn,
+                          DateFormatter.formatDateTime(currentVisitor.createdAt),
+                        ),
+                        if (currentVisitor.checkInTime != null) ...[
+                          const Divider(height: 16, color: AppColors.divider),
+                          _buildInfoRow(
+                            AppConstants.labelCheckInTime,
+                            DateFormatter.formatDateTime(currentVisitor.checkInTime),
+                          ),
+                        ],
+                        if (currentVisitor.checkOutTime != null) ...[
+                          const Divider(height: 16, color: AppColors.divider),
+                          _buildInfoRow(
+                            AppConstants.labelCheckOutTime,
+                            DateFormatter.formatDateTime(currentVisitor.checkOutTime),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
 
                   // Check In Button
                   CustomButton(
@@ -162,7 +255,7 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
                           }
                         : null,
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 12),
 
                   // Check Out Button
                   CustomButton(
@@ -181,7 +274,7 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
                           }
                         : null,
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 12),
 
                   // View Details Button
                   CustomButton(
@@ -197,8 +290,7 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
                       );
                     },
                   ),
-
-                  const Spacer(),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),

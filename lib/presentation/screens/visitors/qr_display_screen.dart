@@ -241,7 +241,7 @@ class _QRDisplayScreenState extends State<QRDisplayScreen> {
                           padding: const EdgeInsets.all(12),
                           color: AppColors.white,
                           child: QrImageView(
-                            data: widget.visitor.id,
+                            data: widget.visitor.toQrData(),
                             version: QrVersions.auto,
                             size: 190.0,
                             backgroundColor: AppColors.white,
