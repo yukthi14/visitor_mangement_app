@@ -1,6 +1,7 @@
 package com.example.visitor_mangement_app
 
 import android.content.ContentValues
+import android.media.MediaScannerConnection
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
@@ -40,6 +41,15 @@ class MainActivity : FlutterActivity() {
 
     private fun saveImageToDownloads(fileName: String, bytes: ByteArray): String {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val resolver = applicationContext.contentResolver
+
+            // Delete any existing entry with the same name so it overwrites cleanly
+            try {
+                val selection = "${MediaStore.MediaColumns.DISPLAY_NAME} = ?"
+                val selectionArgs = arrayOf(fileName)
+                resolver.delete(MediaStore.Downloads.EXTERNAL_CONTENT_URI, selection, selectionArgs)
+            } catch (_: Exception) {}
+
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
                 put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
@@ -47,7 +57,6 @@ class MainActivity : FlutterActivity() {
                 put(MediaStore.MediaColumns.IS_PENDING, 1)
             }
 
-            val resolver = applicationContext.contentResolver
             val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
                 ?: throw Exception("Failed to create MediaStore entry in Downloads")
 
@@ -59,7 +68,19 @@ class MainActivity : FlutterActivity() {
             contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
             resolver.update(uri, contentValues, null, null)
 
-            "/storage/emulated/0/Download/$fileName"
+            val fullPath = "/storage/emulated/0/Download/$fileName"
+
+            // Notify MediaScanner so the system Downloads app indexes it instantly
+            try {
+                MediaScannerConnection.scanFile(
+                    applicationContext,
+                    arrayOf(fullPath),
+                    arrayOf("image/png"),
+                    null
+                )
+            } catch (_: Exception) {}
+
+            fullPath
         } else {
             val downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             if (!downloadDir.exists()) {
@@ -67,6 +88,16 @@ class MainActivity : FlutterActivity() {
             }
             val targetFile = File(downloadDir, fileName)
             FileOutputStream(targetFile).use { it.write(bytes) }
+
+            try {
+                MediaScannerConnection.scanFile(
+                    applicationContext,
+                    arrayOf(targetFile.absolutePath),
+                    arrayOf("image/png"),
+                    null
+                )
+            } catch (_: Exception) {}
+
             targetFile.absolutePath
         }
     }

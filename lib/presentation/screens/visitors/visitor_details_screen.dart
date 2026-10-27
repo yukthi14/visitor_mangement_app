@@ -11,7 +11,6 @@ import '../../../logic/blocs/visitor/visitor_event.dart';
 import '../../../logic/blocs/visitor/visitor_state.dart';
 import '../success/status_success_screen.dart';
 import 'qr_display_screen.dart';
-import 'register_visitor_screen.dart';
 
 class VisitorDetailsScreen extends StatelessWidget {
   final VisitorModel visitor;

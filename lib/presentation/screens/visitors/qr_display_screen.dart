@@ -125,7 +125,7 @@ class _QRDisplayScreenState extends State<QRDisplayScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'QR Code downloaded to: $filePath',
+                    'QR Code downloaded to Downloads folder: $filePath',
                     style: const TextStyle(color: AppColors.white),
                   ),
                 ),
