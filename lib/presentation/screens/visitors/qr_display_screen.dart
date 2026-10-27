@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/status_chip.dart';
@@ -18,12 +18,18 @@ class QRDisplayScreen extends StatefulWidget {
 }
 
 class _QRDisplayScreenState extends State<QRDisplayScreen> {
+  static const MethodChannel _storageChannel =
+      MethodChannel('com.example.visitor_mangement_app/storage');
+
   final GlobalKey _qrCardKey = GlobalKey();
   String? savedPath;
   bool _isDownloading = false;
 
   /// Captures the QR card as a high-resolution PNG screenshot
-  /// and saves it directly to the device Downloads folder (/storage/emulated/0/Download/).
+  /// and saves it directly to the device Downloads folder.
+  ///
+  /// Uses Android MediaStore Scoped Storage on Android 10+ so it never throws
+  /// Permission denied (errno = 13), with seamless fallbacks.
   Future<void> _captureAndSave() async {
     if (_isDownloading) return;
 
@@ -47,28 +53,68 @@ class _QRDisplayScreenState extends State<QRDisplayScreen> {
       }
 
       final Uint8List imageBytes = byteData.buffer.asUint8List();
+      final fileName = 'qr_${widget.visitor.id}.png';
+      String filePath;
 
-      // Path to Downloads folder
-      Directory dir = Directory('/storage/emulated/0/Download');
-      if (!await dir.exists()) {
+      // Tier 1: Try native MediaStore Downloads Scoped Storage API (No permission needed)
+      try {
+        final String? nativePath = await _storageChannel.invokeMethod<String>(
+          'saveToDownloads',
+          {
+            'fileName': fileName,
+            'bytes': imageBytes,
+          },
+        );
+        filePath = nativePath ?? '/storage/emulated/0/Download/$fileName';
+      } catch (nativeErr) {
+        debugPrint('Native MediaStore channel unavailable ($nativeErr), attempting direct filesystem write');
+
+        // Tier 2: Try direct write to /storage/emulated/0/Download
+        bool writeSuccess = false;
+        filePath = '/storage/emulated/0/Download/$fileName';
+
         try {
-          await dir.create(recursive: true);
-        } catch (_) {
-          // Fallback if running in non-Android or restricted sandbox
-          dir = Directory.systemTemp;
+          final dir = Directory('/storage/emulated/0/Download');
+          if (!await dir.exists()) {
+            await dir.create(recursive: true);
+          }
+          final file = File(filePath);
+          await file.writeAsBytes(imageBytes);
+          writeSuccess = true;
+        } catch (fsErr) {
+          debugPrint('Direct write to /storage/emulated/0/Download failed: $fsErr');
+        }
+
+        // Tier 3: Fallback to app external Download directory (guaranteed accessible without permissions)
+        if (!writeSuccess) {
+          final fallbackDir = Directory('/storage/emulated/0/Android/data/com.example.visitor_mangement_app/files/Download');
+          if (!await fallbackDir.exists()) {
+            try {
+              await fallbackDir.create(recursive: true);
+            } catch (_) {
+              // Final fallback if running on non-Android platform (e.g. desktop/test)
+              final tempDir = Directory.systemTemp;
+              final tempFile = File('${tempDir.path}/$fileName');
+              await tempFile.writeAsBytes(imageBytes);
+              filePath = tempFile.path;
+              writeSuccess = true;
+            }
+          }
+
+          if (!writeSuccess) {
+            final fallbackFile = File('${fallbackDir.path}/$fileName');
+            await fallbackFile.writeAsBytes(imageBytes);
+            filePath = fallbackFile.path;
+          }
         }
       }
-
-      final filePath = '${dir.path}/qr_${widget.visitor.id}.png';
-      final file = File(filePath);
-      await file.writeAsBytes(imageBytes);
 
       setState(() {
         savedPath = filePath;
         _isDownloading = false;
       });
 
-      debugPrint("QR Code screenshot saved at: $filePath");
+      debugPrint("QR Code screenshot successfully saved at: $filePath");
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
