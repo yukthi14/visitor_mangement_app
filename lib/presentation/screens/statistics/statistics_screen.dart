@@ -7,7 +7,6 @@ import '../../../core/widgets/shimmer_loading.dart';
 import '../../../logic/blocs/auth/auth_bloc.dart';
 import '../../../logic/blocs/auth/auth_event.dart';
 import '../../../logic/blocs/visitor/visitor_bloc.dart';
-import '../../../logic/blocs/visitor/visitor_event.dart';
 import '../../../logic/blocs/visitor/visitor_state.dart';
 import '../auth/login_screen.dart';
 
@@ -23,57 +22,6 @@ class StatisticsScreen extends StatefulWidget {
 class _StatisticsScreenState extends State<StatisticsScreen> {
   final DateTime _selectedDate = DateTime.now();
 
-  void _showApiConfigDialog(BuildContext context, String currentUrl) {
-    final controller = TextEditingController(text: currentUrl);
-
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Mock REST API Configuration'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Configure the Mock REST API Base URL. All CRUD and status operations synchronize with this endpoint with persistent local caching fallback.',
-              style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: controller,
-              decoration: const InputDecoration(
-                labelText: 'Base URL',
-                hintText: 'https://...',
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final newUrl = controller.text.trim();
-              if (newUrl.isNotEmpty) {
-                context.read<VisitorBloc>().add(UpdateBaseUrlRequested(newUrl));
-                Navigator.of(ctx).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('API URL updated: $newUrl'),
-                    backgroundColor: AppColors.success,
-                  ),
-                );
-              }
-            },
-            child: const Text('Save'),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,15 +31,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               title: const Text('Visitor Statistics'),
               centerTitle: true,
               actions: [
-                IconButton(
-                  icon: const Icon(Icons.settings_outlined),
-                  tooltip: 'API Settings',
-                  onPressed: () {
-                    final state = context.read<VisitorBloc>().state;
-                    final url = state is VisitorLoaded ? state.baseUrl : '';
-                    _showApiConfigDialog(context, url);
-                  },
-                ),
                 IconButton(
                   icon: const Icon(Icons.logout_rounded),
                   tooltip: 'Logout',
@@ -116,11 +55,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           int totalVendors = 0;
           int totalOthers = 0;
           int totalVisitors = 0;
-          String baseUrl = '';
 
           if (state is VisitorLoaded) {
             totalVisitors = state.allVisitors.length;
-            baseUrl = state.baseUrl;
             for (var v in state.allVisitors) {
               if (v.visitorType == 'Customer') {
                 totalCustomers++;
@@ -288,70 +225,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                   totalOthers > 0 ? totalOthers : 2,
                                 ),
                               ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // API & System Status Card
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Mock REST API & Storage',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () => _showApiConfigDialog(context, baseUrl),
-                            child: const Text('Change URL'),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        baseUrl,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textSecondary,
-                          fontFamily: 'monospace',
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: const BoxDecoration(
-                              color: AppColors.success,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          const Text(
-                            'Persistent Storage Active',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.success,
-                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
