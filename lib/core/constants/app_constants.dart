@@ -170,4 +170,10 @@ class AppConstants {
   static const String prefLoggedUser = 'pref_logged_user';
   static const String prefRememberMe = 'pref_remember_me';
   static const String prefRememberedUsername = 'pref_remembered_username';
+  static const String prefSampleDataCleaned = 'pref_sample_data_cleaned_v2';
+
+  // QR Scanner Messages
+  static const String titleInvalidQR = 'Invalid QR Code';
+  static const String invalidQRMessage = 'The scanned QR code is invalid or does not match any registered visitor in the database.';
+  static const String scanAgain = 'Scan Again';
 }

@@ -316,6 +316,7 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
                             children: [
                               SizedBox(height: MediaQuery.of(context).size.height * 0.2),
                               EmptyStateView(
+                                icon: state.searchQuery.isNotEmpty ? Icons.search_off_rounded : null,
                                 title: state.searchQuery.isNotEmpty ? AppConstants.noMatchesFound : AppConstants.noVisitorsRegistered,
                                 message: state.searchQuery.isNotEmpty
                                     ? '${AppConstants.noVisitorsFound} "${state.searchQuery}"'

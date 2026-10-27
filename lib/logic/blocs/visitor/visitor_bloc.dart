@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../data/models/visitor_model.dart';
 import '../../../data/repositories/visitor_repository.dart';
 import 'visitor_event.dart';
@@ -313,52 +315,108 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
     }
   }
 
+  String? extractVisitorId(String rawQr) {
+    final trimmed = rawQr.trim();
+    if (trimmed.isEmpty) return null;
+
+    // 1. JSON payload e.g. {"id": "VST001"} or {"visitor_id": "VST001"}
+    if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+      try {
+        final decoded = jsonDecode(trimmed);
+        if (decoded is Map<String, dynamic>) {
+          if (decoded['visitor_id'] != null) return decoded['visitor_id'].toString().trim();
+          if (decoded['id'] != null) return decoded['id'].toString().trim();
+          if (decoded['visitorId'] != null) return decoded['visitorId'].toString().trim();
+        }
+      } catch (_) {}
+    }
+
+    // 2. URL or deep-link parameter e.g. ?visitor_id=VST001 or /visitors/VST001
+    final uri = Uri.tryParse(trimmed);
+    if (uri != null) {
+      if (uri.queryParameters.containsKey('visitor_id')) {
+        return uri.queryParameters['visitor_id']!.trim();
+      }
+      if (uri.queryParameters.containsKey('id')) {
+        return uri.queryParameters['id']!.trim();
+      }
+      if (uri.pathSegments.isNotEmpty) {
+        final lastSegment = uri.pathSegments.last.trim();
+        if (lastSegment.toUpperCase().startsWith('VST') || RegExp(r'^\d+$').hasMatch(lastSegment)) {
+          return lastSegment;
+        }
+      }
+    }
+
+    // 3. Formatted VST pattern e.g. VST001, VST123
+    final match = RegExp(r'\b(VST\d+)\b', caseSensitive: false).firstMatch(trimmed);
+    if (match != null) {
+      return match.group(1)!.toUpperCase();
+    }
+
+    // 4. Clean alphanumeric ID (3-20 characters without spaces or special symbols)
+    if (RegExp(r'^[A-Za-z0-9_-]{3,20}$').hasMatch(trimmed)) {
+      return trimmed.toUpperCase();
+    }
+
+    return null;
+  }
+
   Future<void> _onScanVisitorRequested(
     ScanVisitorRequested event,
     Emitter<VisitorState> emit,
   ) async {
     if (state is VisitorLoaded) {
       final loaded = state as VisitorLoaded;
-      final raw = event.rawQrCode.trim();
+      final visitorId = extractVisitorId(event.rawQrCode);
 
-      // Find in existing list
-      VisitorModel? found;
-      try {
-        found = loaded.allVisitors.firstWhere(
-          (v) => v.id.toLowerCase() == raw.toLowerCase() || raw.contains(v.id),
-        );
-      } catch (_) {
-        found = null;
+      // Validate format
+      if (visitorId == null) {
+        emit(loaded.copyWith(
+          clearScannedVisitor: true,
+          errorMessage: AppConstants.invalidQRMessage,
+        ));
+        return;
       }
 
-      if (found != null) {
-        emit(loaded.copyWith(
-          scannedVisitor: found,
-          selectedVisitor: found,
-          clearErrorMessage: true,
-        ));
-      } else {
-        // Try looking up via repository
-        try {
-          final lookedUp = await repository.getVisitorById(raw);
-          if (lookedUp != null) {
-            emit(loaded.copyWith(
-              scannedVisitor: lookedUp,
-              selectedVisitor: lookedUp,
-              clearErrorMessage: true,
-            ));
+      // Retrieve visitor details from the API / repository
+      try {
+        final lookedUp = await repository.getVisitorById(visitorId);
+        if (lookedUp != null) {
+          // Synchronize with local state list
+          final existingIndex = loaded.allVisitors.indexWhere((v) => v.id.toLowerCase() == lookedUp.id.toLowerCase());
+          List<VisitorModel> updatedList;
+          if (existingIndex >= 0) {
+            updatedList = List<VisitorModel>.from(loaded.allVisitors)..[existingIndex] = lookedUp;
           } else {
-            emit(loaded.copyWith(
-              clearScannedVisitor: true,
-              errorMessage: 'Visitor with ID "$raw" not found in records.',
-            ));
+            updatedList = [lookedUp, ...loaded.allVisitors];
           }
-        } catch (_) {
+
+          final filtered = _applyFilters(
+            list: updatedList,
+            query: loaded.searchQuery,
+            project: loaded.selectedProject,
+            status: loaded.selectedStatus,
+          );
+
+          emit(loaded.copyWith(
+            allVisitors: updatedList,
+            filteredVisitors: filtered,
+            scannedVisitor: lookedUp,
+            selectedVisitor: lookedUp,
+            clearErrorMessage: true,
+          ));
+        } else {
           emit(loaded.copyWith(
             clearScannedVisitor: true,
-            errorMessage: 'Invalid QR code or visitor not found ($raw).',
+            errorMessage: 'No visitor found with ID "$visitorId". Please scan a valid visitor pass.',
           ));
         }
+      } catch (e) {
+        emit(loaded.copyWith(
+          clearScannedVisitor: true,
+          errorMessage: 'Failed to retrieve visitor details: ${e.toString()}',
+        ));
       }
     }
   }

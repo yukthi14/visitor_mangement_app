@@ -79,8 +79,16 @@ class VisitorRepositoryImpl implements VisitorRepository {
     final baseUrl = await getBaseUrl();
     final cached = await localDataSource.getCachedVisitors();
 
-    // Generate formatted ID like VST006
-    final nextNumber = (cached.length + 1).toString().padLeft(3, '0');
+    // Generate formatted ID like VST001, VST002...
+    int maxIdNum = 0;
+    for (final v in cached) {
+      final digits = v.id.replaceAll(RegExp(r'[^0-9]'), '');
+      final parsed = int.tryParse(digits);
+      if (parsed != null && parsed > maxIdNum) {
+        maxIdNum = parsed;
+      }
+    }
+    final nextNumber = (maxIdNum + 1).toString().padLeft(3, '0');
     final newId = 'VST$nextNumber';
     final nowIso = DateTime.now().toIso8601String();
 

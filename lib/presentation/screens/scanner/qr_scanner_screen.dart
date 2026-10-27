@@ -54,8 +54,73 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
     bloc.add(ScanVisitorRequested(visitorId));
   }
 
+  void _showInvalidQrDialog(String message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        backgroundColor: AppColors.white,
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(
+                color: AppColors.dangerBg,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.qr_code_scanner_rounded,
+                color: AppColors.danger,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                AppConstants.titleInvalidQR,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          message,
+          style: const TextStyle(
+            fontSize: 14,
+            color: AppColors.textSecondary,
+            height: 1.4,
+          ),
+        ),
+        actions: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: AppColors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+            ),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              setState(() {
+                _isProcessing = false;
+              });
+            },
+            child: const Text(AppConstants.scanAgain),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showManualInputDialog() {
-    final textController = TextEditingController(text: 'VST001');
+    final textController = TextEditingController();
 
     showDialog(
       context: context,
@@ -95,15 +160,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       listener: (context, state) {
         if (state is VisitorLoaded) {
           if (state.errorMessage != null && state.errorMessage!.isNotEmpty && _isProcessing) {
-            setState(() {
-              _isProcessing = false;
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage!),
-                backgroundColor: AppColors.danger,
-              ),
-            );
+            _showInvalidQrDialog(state.errorMessage!);
           } else if (state.scannedVisitor != null && _isProcessing) {
             setState(() {
               _isProcessing = false;

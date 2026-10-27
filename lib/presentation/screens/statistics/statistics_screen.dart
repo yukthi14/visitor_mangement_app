@@ -18,7 +18,34 @@ class StatisticsScreen extends StatefulWidget {
 }
 
 class _StatisticsScreenState extends State<StatisticsScreen> {
-  final DateTime _selectedDate = DateTime.now();
+  DateTime _selectedDate = DateTime.now();
+
+  Future<void> _pickDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2035),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: AppColors.primary,
+              onPrimary: AppColors.white,
+              onSurface: AppColors.textPrimary,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +68,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           int totalOthers = 0;
           int totalVisitors = 0;
 
+          // Weekly data initialization (Mon to Sun)
+          final checkedInData = List<double>.filled(7, 0.0);
+          final checkedOutData = List<double>.filled(7, 0.0);
+
           if (state is VisitorLoaded) {
             totalVisitors = state.allVisitors.length;
             for (var v in state.allVisitors) {
@@ -52,40 +83,95 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 totalOthers++;
               }
             }
+
+            // Calculate Monday of the selected week
+            final monday = DateTime(
+              _selectedDate.year,
+              _selectedDate.month,
+              _selectedDate.day,
+            ).subtract(Duration(days: _selectedDate.weekday - 1));
+
+            for (int i = 0; i < 7; i++) {
+              final dayStart = monday.add(Duration(days: i));
+              final dayEnd = dayStart.add(const Duration(days: 1));
+
+              for (final v in state.allVisitors) {
+                DateTime? checkInDt;
+                if (v.checkInTime != null) {
+                  checkInDt = DateTime.tryParse(v.checkInTime!);
+                } else if (v.status == AppConstants.statusCheckedIn) {
+                  checkInDt = DateTime.tryParse(v.createdAt);
+                }
+
+                if (checkInDt != null &&
+                    !checkInDt.isBefore(dayStart) &&
+                    checkInDt.isBefore(dayEnd)) {
+                  checkedInData[i] += 1.0;
+                }
+
+                DateTime? checkOutDt;
+                if (v.checkOutTime != null) {
+                  checkOutDt = DateTime.tryParse(v.checkOutTime!);
+                } else if (v.status == AppConstants.statusCheckedOut) {
+                  checkOutDt = DateTime.tryParse(v.createdAt);
+                }
+
+                if (checkOutDt != null &&
+                    !checkOutDt.isBefore(dayStart) &&
+                    checkOutDt.isBefore(dayEnd)) {
+                  checkedOutData[i] += 1.0;
+                }
+              }
+            }
           }
+
+          // Determine maximum bar value rounded to 5
+          final highestVal = [
+            15.0,
+            ...checkedInData,
+            ...checkedOutData,
+          ].reduce(math.max);
+          final chartMax = ((highestVal / 5).ceil() * 5).toDouble();
 
           return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Date Selector Header Card
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
+                // Date Selector Header Card (Interactive)
+                Material(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  child: InkWell(
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
+                    onTap: _pickDate,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Icon(Icons.calendar_today_outlined, size: 18, color: AppColors.primary),
-                          const SizedBox(width: 10),
-                          Text(
-                            DateFormatter.formatDate(_selectedDate.toIso8601String()),
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
-                            ),
+                          Row(
+                            children: [
+                              const Icon(Icons.calendar_today_outlined, size: 18, color: AppColors.primary),
+                              const SizedBox(width: 10),
+                              Text(
+                                DateFormatter.formatDate(_selectedDate.toIso8601String()),
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                            ],
                           ),
+                          const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.textSecondary),
                         ],
                       ),
-                      const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.textSecondary),
-                    ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -117,7 +203,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         height: 180,
                         child: CustomPaint(
                           size: const Size(double.infinity, 180),
-                          painter: WeeklyBarChartPainter(),
+                          painter: WeeklyBarChartPainter(
+                            checkedInData: checkedInData,
+                            checkedOutData: checkedOutData,
+                            maxValue: chartMax,
+                          ),
                         ),
                       ),
                     ],
@@ -158,9 +248,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                 CustomPaint(
                                   size: const Size(130, 130),
                                   painter: DonutChartPainter(
-                                    customerCount: totalCustomers > 0 ? totalCustomers : 8,
-                                    vendorCount: totalVendors > 0 ? totalVendors : 5,
-                                    otherCount: totalOthers > 0 ? totalOthers : 2,
+                                    customerCount: totalCustomers,
+                                    vendorCount: totalVendors,
+                                    otherCount: totalOthers,
                                   ),
                                 ),
                                 Column(
@@ -174,7 +264,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                       ),
                                     ),
                                     Text(
-                                      totalVisitors > 0 ? totalVisitors.toString() : '15',
+                                      totalVisitors.toString(),
                                       style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -195,19 +285,19 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                 _buildTypeCountRow(
                                   AppColors.statusCheckedInText,
                                   AppConstants.typeCustomer,
-                                  totalCustomers > 0 ? totalCustomers : 8,
+                                  totalCustomers,
                                 ),
                                 const Divider(height: 16, color: AppColors.divider),
                                 _buildTypeCountRow(
                                   AppColors.primary,
                                   AppConstants.typeVendor,
-                                  totalVendors > 0 ? totalVendors : 5,
+                                  totalVendors,
                                 ),
                                 const Divider(height: 16, color: AppColors.divider),
                                 _buildTypeCountRow(
                                   AppColors.textMuted,
                                   AppConstants.typeOther,
-                                  totalOthers > 0 ? totalOthers : 2,
+                                  totalOthers,
                                 ),
                               ],
                             ),
@@ -280,6 +370,18 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 }
 
 class WeeklyBarChartPainter extends CustomPainter {
+  final List<double> checkedInData;
+  final List<double> checkedOutData;
+  final double maxValue;
+  final List<String> days;
+
+  WeeklyBarChartPainter({
+    required this.checkedInData,
+    required this.checkedOutData,
+    this.maxValue = 15.0,
+    this.days = const ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  });
+
   @override
   void paint(Canvas canvas, Size size) {
     final checkedInPaint = Paint()..color = AppColors.statusCheckedInText;
@@ -290,19 +392,14 @@ class WeeklyBarChartPainter extends CustomPainter {
 
     final textPainter = TextPainter(textDirection: TextDirection.ltr);
 
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    final checkedInData = [6.0, 9.0, 8.0, 5.0, 7.0, 4.0, 5.0];
-    final checkedOutData = [4.0, 7.0, 6.0, 9.0, 6.0, 8.0, 6.0];
-
     const double chartLeft = 25.0;
     const double chartBottom = 155.0;
     final double chartWidth = size.width - chartLeft - 10;
     const double chartHeight = 135.0;
-    const double maxValue = 15.0;
 
-    // Draw horizontal grid lines & Y labels (15, 10, 5, 0)
+    // Draw horizontal grid lines & Y labels (maxValue, 2/3, 1/3, 0)
     for (int i = 0; i <= 3; i++) {
-      final yVal = (15 - i * 5);
+      final yVal = (maxValue - i * (maxValue / 3)).round();
       final y = 20.0 + (i * (chartHeight / 3));
 
       canvas.drawLine(
@@ -326,30 +423,36 @@ class WeeklyBarChartPainter extends CustomPainter {
       final groupCenterX = chartLeft + (i * groupWidth) + (groupWidth / 2);
 
       // Bar 1: Checked In (Green)
-      final checkedInHeight = (checkedInData[i] / maxValue) * chartHeight;
-      final rect1 = RRect.fromRectAndRadius(
-        Rect.fromLTWH(
-          groupCenterX - barWidth - 1,
-          chartBottom - checkedInHeight,
-          barWidth,
-          checkedInHeight,
-        ),
-        const Radius.circular(3),
-      );
-      canvas.drawRRect(rect1, checkedInPaint);
+      final inCount = i < checkedInData.length ? checkedInData[i] : 0.0;
+      final checkedInHeight = maxValue > 0 ? (inCount / maxValue) * chartHeight : 0.0;
+      if (checkedInHeight > 0) {
+        final rect1 = RRect.fromRectAndRadius(
+          Rect.fromLTWH(
+            groupCenterX - barWidth - 1,
+            chartBottom - checkedInHeight,
+            barWidth,
+            checkedInHeight,
+          ),
+          const Radius.circular(3),
+        );
+        canvas.drawRRect(rect1, checkedInPaint);
+      }
 
       // Bar 2: Checked Out (Purple)
-      final checkedOutHeight = (checkedOutData[i] / maxValue) * chartHeight;
-      final rect2 = RRect.fromRectAndRadius(
-        Rect.fromLTWH(
-          groupCenterX + 1,
-          chartBottom - checkedOutHeight,
-          barWidth,
-          checkedOutHeight,
-        ),
-        const Radius.circular(3),
-      );
-      canvas.drawRRect(rect2, checkedOutPaint);
+      final outCount = i < checkedOutData.length ? checkedOutData[i] : 0.0;
+      final checkedOutHeight = maxValue > 0 ? (outCount / maxValue) * chartHeight : 0.0;
+      if (checkedOutHeight > 0) {
+        final rect2 = RRect.fromRectAndRadius(
+          Rect.fromLTWH(
+            groupCenterX + 1,
+            chartBottom - checkedOutHeight,
+            barWidth,
+            checkedOutHeight,
+          ),
+          const Radius.circular(3),
+        );
+        canvas.drawRRect(rect2, checkedOutPaint);
+      }
 
       // Day label
       textPainter.text = TextSpan(
@@ -365,7 +468,7 @@ class WeeklyBarChartPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant WeeklyBarChartPainter oldDelegate) => true;
 }
 
 class DonutChartPainter extends CustomPainter {
@@ -381,12 +484,20 @@ class DonutChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final total = customerCount + vendorCount + otherCount;
-    if (total == 0) return;
-
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
     const strokeWidth = 14.0;
+
+    final total = customerCount + vendorCount + otherCount;
+    if (total == 0) {
+      // Draw clean empty circular outline in AppColors.border
+      final emptyPaint = Paint()
+        ..color = AppColors.border
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth;
+      canvas.drawCircle(center, radius - strokeWidth / 2, emptyPaint);
+      return;
+    }
 
     final paintCustomer = Paint()
       ..color = AppColors.statusCheckedInText
@@ -409,38 +520,44 @@ class DonutChartPainter extends CustomPainter {
     double startAngle = -math.pi / 2;
 
     // Customer slice
-    final sweep1 = (customerCount / total) * 2 * math.pi;
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius - strokeWidth / 2),
-      startAngle,
-      sweep1 - 0.08,
-      false,
-      paintCustomer,
-    );
-    startAngle += sweep1;
+    if (customerCount > 0) {
+      final sweep1 = (customerCount / total) * 2 * math.pi;
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius - strokeWidth / 2),
+        startAngle,
+        sweep1 > 0.1 ? sweep1 - 0.08 : sweep1,
+        false,
+        paintCustomer,
+      );
+      startAngle += sweep1;
+    }
 
     // Vendor slice
-    final sweep2 = (vendorCount / total) * 2 * math.pi;
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius - strokeWidth / 2),
-      startAngle,
-      sweep2 - 0.08,
-      false,
-      paintVendor,
-    );
-    startAngle += sweep2;
+    if (vendorCount > 0) {
+      final sweep2 = (vendorCount / total) * 2 * math.pi;
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius - strokeWidth / 2),
+        startAngle,
+        sweep2 > 0.1 ? sweep2 - 0.08 : sweep2,
+        false,
+        paintVendor,
+      );
+      startAngle += sweep2;
+    }
 
     // Other slice
-    final sweep3 = (otherCount / total) * 2 * math.pi;
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius - strokeWidth / 2),
-      startAngle,
-      sweep3 - 0.08,
-      false,
-      paintOther,
-    );
+    if (otherCount > 0) {
+      final sweep3 = (otherCount / total) * 2 * math.pi;
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius - strokeWidth / 2),
+        startAngle,
+        sweep3 > 0.1 ? sweep3 - 0.08 : sweep3,
+        false,
+        paintOther,
+      );
+    }
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(covariant DonutChartPainter oldDelegate) => true;
 }
