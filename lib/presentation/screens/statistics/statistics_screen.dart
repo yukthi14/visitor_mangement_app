@@ -73,8 +73,32 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           final checkedOutData = List<double>.filled(7, 0.0);
 
           if (state is VisitorLoaded) {
-            totalVisitors = state.allVisitors.length;
-            for (var v in state.allVisitors) {
+            // Calculate Monday of the selected week
+            final monday = DateTime(
+              _selectedDate.year,
+              _selectedDate.month,
+              _selectedDate.day,
+            ).subtract(Duration(days: _selectedDate.weekday - 1));
+            final sundayEnd = monday.add(const Duration(days: 7));
+
+            // Weekly Visitors for the selected week
+            final weeklyVisitors = state.allVisitors.where((v) {
+              final dates = <DateTime>[];
+              final created = DateTime.tryParse(v.createdAt)?.toLocal();
+              if (created != null) dates.add(created);
+              if (v.checkInTime != null) {
+                final inTime = DateTime.tryParse(v.checkInTime!)?.toLocal();
+                if (inTime != null) dates.add(inTime);
+              }
+              if (v.checkOutTime != null) {
+                final outTime = DateTime.tryParse(v.checkOutTime!)?.toLocal();
+                if (outTime != null) dates.add(outTime);
+              }
+              return dates.any((d) => !d.isBefore(monday) && d.isBefore(sundayEnd));
+            }).toList();
+
+            totalVisitors = weeklyVisitors.length;
+            for (var v in weeklyVisitors) {
               if (v.visitorType == AppConstants.typeCustomer) {
                 totalCustomers++;
               } else if (v.visitorType == AppConstants.typeVendor) {
@@ -84,13 +108,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               }
             }
 
-            // Calculate Monday of the selected week
-            final monday = DateTime(
-              _selectedDate.year,
-              _selectedDate.month,
-              _selectedDate.day,
-            ).subtract(Duration(days: _selectedDate.weekday - 1));
-
             for (int i = 0; i < 7; i++) {
               final dayStart = monday.add(Duration(days: i));
               final dayEnd = dayStart.add(const Duration(days: 1));
@@ -98,9 +115,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               for (final v in state.allVisitors) {
                 DateTime? checkInDt;
                 if (v.checkInTime != null) {
-                  checkInDt = DateTime.tryParse(v.checkInTime!);
+                  checkInDt = DateTime.tryParse(v.checkInTime!)?.toLocal();
                 } else if (v.status == AppConstants.statusCheckedIn) {
-                  checkInDt = DateTime.tryParse(v.createdAt);
+                  checkInDt = DateTime.tryParse(v.createdAt)?.toLocal();
                 }
 
                 if (checkInDt != null &&
@@ -111,9 +128,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
                 DateTime? checkOutDt;
                 if (v.checkOutTime != null) {
-                  checkOutDt = DateTime.tryParse(v.checkOutTime!);
+                  checkOutDt = DateTime.tryParse(v.checkOutTime!)?.toLocal();
                 } else if (v.status == AppConstants.statusCheckedOut) {
-                  checkOutDt = DateTime.tryParse(v.createdAt);
+                  checkOutDt = DateTime.tryParse(v.createdAt)?.toLocal();
                 }
 
                 if (checkOutDt != null &&
