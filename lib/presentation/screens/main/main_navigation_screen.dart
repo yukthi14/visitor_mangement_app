@@ -74,9 +74,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               label: 'Scan',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.more_horiz_rounded),
-              activeIcon: Icon(Icons.more_horiz_rounded),
-              label: 'More',
+              icon: Icon(Icons.bar_chart_outlined),
+              activeIcon: Icon(Icons.bar_chart_rounded),
+              label: 'Stats',
             ),
           ],
         ),

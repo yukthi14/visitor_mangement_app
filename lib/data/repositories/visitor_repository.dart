@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 import '../datasources/visitor_local_datasource.dart';
 import '../datasources/visitor_remote_datasource.dart';
 import '../models/visitor_model.dart';
@@ -50,10 +49,8 @@ class VisitorRepositoryImpl implements VisitorRepository {
         await localDataSource.cacheVisitors(remoteList);
         return remoteList;
       }
-    } catch (e) {
-      developer.log('Remote getVisitors failed: $e. Falling back to local cache.');
-    }
-    // Return cached visitors
+    } catch (_) {}
+    // Return cached visitors smoothly
     return await localDataSource.getCachedVisitors();
   }
 
@@ -62,11 +59,11 @@ class VisitorRepositoryImpl implements VisitorRepository {
     final baseUrl = await getBaseUrl();
     try {
       final remoteVisitor = await remoteDataSource.getVisitorById(baseUrl, id);
-      await localDataSource.saveVisitorLocally(remoteVisitor);
-      return remoteVisitor;
-    } catch (e) {
-      developer.log('Remote getVisitorById failed: $e. Falling back to local.');
-    }
+      if (remoteVisitor != null) {
+        await localDataSource.saveVisitorLocally(remoteVisitor);
+        return remoteVisitor;
+      }
+    } catch (_) {}
     return await localDataSource.getVisitorById(id);
   }
 
@@ -106,12 +103,12 @@ class VisitorRepositoryImpl implements VisitorRepository {
 
     try {
       final created = await remoteDataSource.createVisitor(baseUrl, newVisitor);
-      await localDataSource.saveVisitorLocally(created);
-      return created;
-    } catch (e) {
-      developer.log('Remote createVisitor failed: $e. Saved to local storage.');
-      return newVisitor;
-    }
+      if (created != null) {
+        await localDataSource.saveVisitorLocally(created);
+        return created;
+      }
+    } catch (_) {}
+    return newVisitor;
   }
 
   @override
@@ -122,12 +119,12 @@ class VisitorRepositoryImpl implements VisitorRepository {
 
     try {
       final updated = await remoteDataSource.updateVisitor(baseUrl, visitor);
-      await localDataSource.saveVisitorLocally(updated);
-      return updated;
-    } catch (e) {
-      developer.log('Remote updateVisitor failed: $e. Updated locally.');
-      return visitor;
-    }
+      if (updated != null) {
+        await localDataSource.saveVisitorLocally(updated);
+        return updated;
+      }
+    } catch (_) {}
+    return visitor;
   }
 
   @override
@@ -162,12 +159,12 @@ class VisitorRepositoryImpl implements VisitorRepository {
         nowIso,
         null,
       );
-      await localDataSource.saveVisitorLocally(remoteUpdated);
-      return remoteUpdated;
-    } catch (e) {
-      developer.log('Remote checkIn failed: $e. Saved locally.');
-      return updatedModel;
-    }
+      if (remoteUpdated != null) {
+        await localDataSource.saveVisitorLocally(remoteUpdated);
+        return remoteUpdated;
+      }
+    } catch (_) {}
+    return updatedModel;
   }
 
   @override
@@ -202,12 +199,12 @@ class VisitorRepositoryImpl implements VisitorRepository {
         null,
         nowIso,
       );
-      await localDataSource.saveVisitorLocally(remoteUpdated);
-      return remoteUpdated;
-    } catch (e) {
-      developer.log('Remote checkOut failed: $e. Saved locally.');
-      return updatedModel;
-    }
+      if (remoteUpdated != null) {
+        await localDataSource.saveVisitorLocally(remoteUpdated);
+        return remoteUpdated;
+      }
+    } catch (_) {}
+    return updatedModel;
   }
 
   @override
@@ -217,8 +214,6 @@ class VisitorRepositoryImpl implements VisitorRepository {
 
     try {
       await remoteDataSource.deleteVisitor(baseUrl, id);
-    } catch (e) {
-      developer.log('Remote deleteVisitor failed: $e. Deleted locally.');
-    }
+    } catch (_) {}
   }
 }

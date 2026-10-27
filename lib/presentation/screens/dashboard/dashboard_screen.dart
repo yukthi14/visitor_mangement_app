@@ -4,9 +4,12 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../core/widgets/shimmer_loading.dart';
 import '../../../core/widgets/stat_card.dart';
+import '../../../logic/blocs/auth/auth_bloc.dart';
+import '../../../logic/blocs/auth/auth_event.dart';
 import '../../../logic/blocs/visitor/visitor_bloc.dart';
 import '../../../logic/blocs/visitor/visitor_event.dart';
 import '../../../logic/blocs/visitor/visitor_state.dart';
+import '../auth/login_screen.dart';
 import '../scanner/qr_scanner_screen.dart';
 import '../visitors/register_visitor_screen.dart';
 
@@ -159,11 +162,21 @@ class DashboardScreen extends StatelessWidget {
             ),
             const Divider(),
             ListTile(
-              leading: const Icon(Icons.refresh, color: AppColors.textSecondary),
-              title: const Text('Refresh Data'),
+              leading: const Icon(Icons.logout_rounded, color: AppColors.danger),
+              title: const Text(
+                'Log Out',
+                style: TextStyle(
+                  color: AppColors.danger,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               onTap: () {
                 Navigator.of(context).pop();
-                context.read<VisitorBloc>().add(const LoadVisitors(isRefresh: true));
+                context.read<AuthBloc>().add(LogoutRequested());
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  (route) => false,
+                );
               },
             ),
           ],

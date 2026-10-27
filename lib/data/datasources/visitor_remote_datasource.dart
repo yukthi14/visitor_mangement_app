@@ -5,10 +5,10 @@ import '../models/visitor_model.dart';
 
 abstract class VisitorRemoteDataSource {
   Future<List<VisitorModel>> getVisitors(String baseUrl);
-  Future<VisitorModel> getVisitorById(String baseUrl, String id);
-  Future<VisitorModel> createVisitor(String baseUrl, VisitorModel visitor);
-  Future<VisitorModel> updateVisitor(String baseUrl, VisitorModel visitor);
-  Future<VisitorModel> updateVisitorStatus(
+  Future<VisitorModel?> getVisitorById(String baseUrl, String id);
+  Future<VisitorModel?> createVisitor(String baseUrl, VisitorModel visitor);
+  Future<VisitorModel?> updateVisitor(String baseUrl, VisitorModel visitor);
+  Future<VisitorModel?> updateVisitorStatus(
     String baseUrl,
     String id,
     String status,
@@ -33,105 +33,113 @@ class VisitorRemoteDataSourceImpl implements VisitorRemoteDataSource {
 
   @override
   Future<List<VisitorModel>> getVisitors(String baseUrl) async {
-    final uri = Uri.parse(_cleanUrl(baseUrl, ApiConstants.visitorsEndpoint));
-    final response = await client
-        .get(uri, headers: {'Content-Type': 'application/json'})
-        .timeout(ApiConstants.connectTimeout);
+    try {
+      final uri = Uri.parse(_cleanUrl(baseUrl, ApiConstants.visitorsEndpoint));
+      final response = await client
+          .get(uri, headers: {'Content-Type': 'application/json'})
+          .timeout(ApiConstants.connectTimeout);
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      final List<dynamic> jsonList = jsonDecode(response.body) as List<dynamic>;
-      return jsonList.map((item) => VisitorModel.fromJson(item as Map<String, dynamic>)).toList();
-    } else {
-      throw Exception('Failed to load visitors (Status: ${response.statusCode})');
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final List<dynamic> jsonList = jsonDecode(response.body) as List<dynamic>;
+        return jsonList.map((item) => VisitorModel.fromJson(item as Map<String, dynamic>)).toList();
+      }
+    } catch (_) {
+      // Remote unavailable, network offline, or mock URL 404
     }
+    return [];
   }
 
   @override
-  Future<VisitorModel> getVisitorById(String baseUrl, String id) async {
-    final uri = Uri.parse(_cleanUrl(baseUrl, '${ApiConstants.visitorsEndpoint}/$id'));
-    final response = await client
-        .get(uri, headers: {'Content-Type': 'application/json'})
-        .timeout(ApiConstants.connectTimeout);
+  Future<VisitorModel?> getVisitorById(String baseUrl, String id) async {
+    try {
+      final uri = Uri.parse(_cleanUrl(baseUrl, '${ApiConstants.visitorsEndpoint}/$id'));
+      final response = await client
+          .get(uri, headers: {'Content-Type': 'application/json'})
+          .timeout(ApiConstants.connectTimeout);
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
-      return VisitorModel.fromJson(data);
-    } else {
-      throw Exception('Visitor not found (Status: ${response.statusCode})');
-    }
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
+        return VisitorModel.fromJson(data);
+      }
+    } catch (_) {}
+    return null;
   }
 
   @override
-  Future<VisitorModel> createVisitor(String baseUrl, VisitorModel visitor) async {
-    final uri = Uri.parse(_cleanUrl(baseUrl, ApiConstants.visitorsEndpoint));
-    final body = jsonEncode(visitor.toJson());
+  Future<VisitorModel?> createVisitor(String baseUrl, VisitorModel visitor) async {
+    try {
+      final uri = Uri.parse(_cleanUrl(baseUrl, ApiConstants.visitorsEndpoint));
+      final body = jsonEncode(visitor.toJson());
 
-    final response = await client
-        .post(
-          uri,
-          headers: {'Content-Type': 'application/json'},
-          body: body,
-        )
-        .timeout(ApiConstants.connectTimeout);
+      final response = await client
+          .post(
+            uri,
+            headers: {'Content-Type': 'application/json'},
+            body: body,
+          )
+          .timeout(ApiConstants.connectTimeout);
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
-      return VisitorModel.fromJson(data);
-    } else {
-      throw Exception('Failed to create visitor (Status: ${response.statusCode})');
-    }
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
+        return VisitorModel.fromJson(data);
+      }
+    } catch (_) {}
+    return null;
   }
 
   @override
-  Future<VisitorModel> updateVisitor(String baseUrl, VisitorModel visitor) async {
-    final uri = Uri.parse(_cleanUrl(baseUrl, '${ApiConstants.visitorsEndpoint}/${visitor.id}'));
-    final body = jsonEncode(visitor.toJson());
+  Future<VisitorModel?> updateVisitor(String baseUrl, VisitorModel visitor) async {
+    try {
+      final uri = Uri.parse(_cleanUrl(baseUrl, '${ApiConstants.visitorsEndpoint}/${visitor.id}'));
+      final body = jsonEncode(visitor.toJson());
 
-    final response = await client
-        .put(
-          uri,
-          headers: {'Content-Type': 'application/json'},
-          body: body,
-        )
-        .timeout(ApiConstants.connectTimeout);
+      final response = await client
+          .put(
+            uri,
+            headers: {'Content-Type': 'application/json'},
+            body: body,
+          )
+          .timeout(ApiConstants.connectTimeout);
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
-      return VisitorModel.fromJson(data);
-    } else {
-      throw Exception('Failed to update visitor (Status: ${response.statusCode})');
-    }
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
+        return VisitorModel.fromJson(data);
+      }
+    } catch (_) {}
+    return null;
   }
 
   @override
-  Future<VisitorModel> updateVisitorStatus(
+  Future<VisitorModel?> updateVisitorStatus(
     String baseUrl,
     String id,
     String status,
     String? checkInTime,
     String? checkOutTime,
   ) async {
-    final uri = Uri.parse(_cleanUrl(baseUrl, '${ApiConstants.visitorsEndpoint}/$id'));
-    final Map<String, dynamic> updatePayload = {'status': status};
-    if (checkInTime != null) {
-      updatePayload['check_in_time'] = checkInTime;
-    }
-    if (checkOutTime != null) {
-      updatePayload['check_out_time'] = checkOutTime;
-    }
+    try {
+      final uri = Uri.parse(_cleanUrl(baseUrl, '${ApiConstants.visitorsEndpoint}/$id'));
+      final Map<String, dynamic> updatePayload = {'status': status};
+      if (checkInTime != null) {
+        updatePayload['check_in_time'] = checkInTime;
+      }
+      if (checkOutTime != null) {
+        updatePayload['check_out_time'] = checkOutTime;
+      }
 
-    final response = await client
-        .patch(
-          uri,
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode(updatePayload),
-        )
-        .timeout(ApiConstants.connectTimeout);
+      final response = await client
+          .patch(
+            uri,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(updatePayload),
+          )
+          .timeout(ApiConstants.connectTimeout);
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
-      return VisitorModel.fromJson(data);
-    } else {
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
+        return VisitorModel.fromJson(data);
+      }
+
       // Some mock servers prefer PUT if PATCH is not supported
       final fallbackResponse = await client
           .put(
@@ -145,19 +153,17 @@ class VisitorRemoteDataSourceImpl implements VisitorRemoteDataSource {
         final Map<String, dynamic> data = jsonDecode(fallbackResponse.body) as Map<String, dynamic>;
         return VisitorModel.fromJson(data);
       }
-      throw Exception('Failed to update visit status (Status: ${response.statusCode})');
-    }
+    } catch (_) {}
+    return null;
   }
 
   @override
   Future<void> deleteVisitor(String baseUrl, String id) async {
-    final uri = Uri.parse(_cleanUrl(baseUrl, '${ApiConstants.visitorsEndpoint}/$id'));
-    final response = await client
-        .delete(uri, headers: {'Content-Type': 'application/json'})
-        .timeout(ApiConstants.connectTimeout);
-
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw Exception('Failed to delete visitor (Status: ${response.statusCode})');
-    }
+    try {
+      final uri = Uri.parse(_cleanUrl(baseUrl, '${ApiConstants.visitorsEndpoint}/$id'));
+      await client
+          .delete(uri, headers: {'Content-Type': 'application/json'})
+          .timeout(ApiConstants.connectTimeout);
+    } catch (_) {}
   }
 }

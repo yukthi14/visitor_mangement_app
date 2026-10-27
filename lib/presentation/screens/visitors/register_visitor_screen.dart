@@ -42,8 +42,8 @@ class _RegisterVisitorScreenState extends State<RegisterVisitorScreen> {
     _mobileController = TextEditingController(text: visitor?.mobile ?? '');
     _emailController = TextEditingController(text: visitor?.email ?? '');
     _purposeController = TextEditingController(text: visitor?.purpose ?? '');
-    _selectedVisitorType = visitor?.visitorType ?? AppConstants.typeCustomer;
-    _selectedProject = visitor?.project ?? AppConstants.projectA;
+    _selectedVisitorType = visitor?.visitorType;
+    _selectedProject = visitor?.project;
   }
 
   @override
