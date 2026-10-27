@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../logic/blocs/visitor/visitor_bloc.dart';
 import '../../../logic/blocs/visitor/visitor_event.dart';
 import '../../../logic/blocs/visitor/visitor_state.dart';
@@ -59,20 +60,20 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Enter Visitor ID'),
+        title: const Text(AppConstants.titleManualInput),
         content: TextField(
           controller: textController,
           autofocus: true,
           textCapitalization: TextCapitalization.characters,
           decoration: const InputDecoration(
-            hintText: 'e.g. VST001',
-            labelText: 'Visitor ID',
+            hintText: AppConstants.hintVisitorId,
+            labelText: AppConstants.labelVisitorId,
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel'),
+            child: const Text(AppConstants.cancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -81,7 +82,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                 _handleScannedValue(textController.text.trim());
               }
             },
-            child: const Text('Find'),
+            child: const Text(AppConstants.find),
           ),
         ],
       ),
@@ -127,7 +128,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                 )
               : null,
           title: const Text(
-            'Scan QR Code',
+            AppConstants.titleScanQR,
             style: TextStyle(
               color: AppColors.white,
               fontSize: 18,
@@ -170,13 +171,13 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                         const Icon(Icons.camera_alt_outlined, color: AppColors.whiteOpacity54, size: 64),
                         const SizedBox(height: 16),
                         const Text(
-                          'Camera Unavailable or Permission Denied',
+                          AppConstants.titleCameraUnavailable,
                           textAlign: TextAlign.center,
                           style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8),
                         const Text(
-                          'You can still test and verify scanning by entering a Visitor ID manually.',
+                          AppConstants.cameraPermissionNotice,
                           textAlign: TextAlign.center,
                           style: TextStyle(color: AppColors.whiteOpacity70, fontSize: 13),
                         ),
@@ -184,7 +185,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                         ElevatedButton.icon(
                           onPressed: _showManualInputDialog,
                           icon: const Icon(Icons.keyboard),
-                          label: const Text('Enter Visitor ID Manually'),
+                          label: const Text(AppConstants.enterVisitorIdManually),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             foregroundColor: AppColors.white,
@@ -279,7 +280,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
               child: Column(
                 children: [
                   const Text(
-                    'Place the QR code within the frame',
+                    AppConstants.alignQRNotice,
                     style: TextStyle(
                       color: AppColors.white,
                       fontSize: 14,
@@ -291,7 +292,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                     onPressed: _showManualInputDialog,
                     icon: const Icon(Icons.edit, color: AppColors.whiteOpacity70, size: 16),
                     label: const Text(
-                      'Enter ID Manually',
+                      AppConstants.enterIdManually,
                       style: TextStyle(
                         color: AppColors.white,
                         fontSize: 13,

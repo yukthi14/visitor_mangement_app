@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/status_chip.dart';
@@ -96,7 +97,7 @@ class VisitorDetailsScreen extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
             ),
             title: const Text(
-              'Visitor Details',
+              AppConstants.titleVisitorDetails,
               style: TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 18,
@@ -185,27 +186,27 @@ class VisitorDetailsScreen extends StatelessWidget {
                           ),
                           child: Column(
                             children: [
-                              _buildDetailRow('Visitor ID', currentVisitor.id),
+                              _buildDetailRow(AppConstants.labelVisitorId, currentVisitor.id),
                               const Divider(height: 14, color: AppColors.divider),
-                              _buildDetailRow('Email', currentVisitor.email ?? '--'),
+                              _buildDetailRow(AppConstants.labelEmail, currentVisitor.email ?? '--'),
                               const Divider(height: 14, color: AppColors.divider),
-                              _buildDetailRow('Purpose of Visit', currentVisitor.purpose),
+                              _buildDetailRow(AppConstants.labelPurpose, currentVisitor.purpose),
                               const Divider(height: 14, color: AppColors.divider),
                               _buildDetailRow(
-                                'Registered On',
+                                AppConstants.labelRegisteredOn,
                                 DateFormatter.formatDateTime(currentVisitor.createdAt),
                               ),
                               if (currentVisitor.checkInTime != null) ...[
                                 const Divider(height: 14, color: AppColors.divider),
                                 _buildDetailRow(
-                                  'Check-In Time',
+                                  AppConstants.labelCheckInTime,
                                   DateFormatter.formatDateTime(currentVisitor.checkInTime),
                                 ),
                               ],
                               if (currentVisitor.checkOutTime != null) ...[
                                 const Divider(height: 14, color: AppColors.divider),
                                 _buildDetailRow(
-                                  'Check-Out Time',
+                                  AppConstants.labelCheckOutTime,
                                   DateFormatter.formatDateTime(currentVisitor.checkOutTime),
                                 ),
                               ],
@@ -247,7 +248,7 @@ class VisitorDetailsScreen extends StatelessWidget {
                                       Icon(Icons.download_rounded, size: 14, color: AppColors.primary),
                                       SizedBox(width: 4),
                                       Text(
-                                        'Tap to View / Download QR',
+                                        AppConstants.tapToViewDownloadQR,
                                         style: TextStyle(
                                           fontSize: 12,
                                           color: AppColors.primary,
@@ -288,7 +289,7 @@ class VisitorDetailsScreen extends StatelessWidget {
                         Expanded(
                           flex: 2,
                           child: CustomButton(
-                            text: 'Check In',
+                            text: AppConstants.actionCheckIn,
                             icon: Icons.login_rounded,
                             backgroundColor: AppColors.statusCheckedInText,
                             isLoading: isSubmitting,
@@ -303,7 +304,7 @@ class VisitorDetailsScreen extends StatelessWidget {
                         Expanded(
                           flex: 2,
                           child: CustomButton(
-                            text: 'Scan to Check Out',
+                            text: AppConstants.actionScanToCheckOut,
                             icon: Icons.qr_code_scanner_rounded,
                             backgroundColor: AppColors.primary,
                             isLoading: isSubmitting,
@@ -325,7 +326,7 @@ class VisitorDetailsScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Text(
-                              'Visit Completed',
+                              AppConstants.statusCompleted,
                               style: TextStyle(
                                 color: AppColors.textSecondary,
                                 fontWeight: FontWeight.bold,

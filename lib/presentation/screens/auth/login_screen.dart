@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../logic/blocs/auth/auth_bloc.dart';
 import '../../../logic/blocs/auth/auth_event.dart';
 import '../../../logic/blocs/auth/auth_state.dart';
@@ -108,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Title & Subtitle
                   const Center(
                     child: Text(
-                      'Visitor Management',
+                      AppConstants.appName,
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -119,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 6),
                   const Center(
                     child: Text(
-                      'Welcome back!',
+                      AppConstants.welcomeBack,
                       style: TextStyle(
                         fontSize: 15,
                         color: AppColors.textSecondary,
@@ -138,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: TextField(
                       controller: _usernameController,
                       decoration: const InputDecoration(
-                        hintText: 'Username',
+                        hintText: AppConstants.labelUsername,
                         hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 14),
                         prefixIcon: Icon(Icons.person_outline, color: AppColors.textSecondary, size: 20),
                         border: InputBorder.none,
@@ -161,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: _passwordController,
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
-                        hintText: 'Password',
+                        hintText: AppConstants.labelPassword,
                         hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 14),
                         prefixIcon: const Icon(Icons.lock_outline, color: AppColors.textSecondary, size: 20),
                         suffixIcon: IconButton(
@@ -207,7 +208,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           )
                         : const Text(
-                            'Login',
+                            AppConstants.labelLogin,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,

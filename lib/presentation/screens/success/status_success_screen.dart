@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../data/models/visitor_model.dart';
@@ -43,8 +44,8 @@ class StatusSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = isCheckIn ? 'Check-In Successful' : 'Check-Out Successful';
-    final actionWord = isCheckIn ? 'checked in' : 'checked out';
+    final title = isCheckIn ? AppConstants.titleCheckInSuccess : AppConstants.titleCheckOutSuccess;
+    final actionWord = isCheckIn ? AppConstants.successCheckedInWord : AppConstants.successCheckedOutWord;
     final timestamp = isCheckIn
         ? (visitor.checkInTime ?? DateFormatter.currentIsoTimestamp())
         : (visitor.checkOutTime ?? DateFormatter.currentIsoTimestamp());
@@ -121,14 +122,14 @@ class StatusSuccessScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    _buildSummaryRow('Visitor ID', visitor.id),
+                    _buildSummaryRow(AppConstants.labelVisitorId, visitor.id),
                     const Divider(height: 1, color: AppColors.divider),
-                    _buildSummaryRow('Project', visitor.project),
+                    _buildSummaryRow(AppConstants.labelProject, visitor.project),
                     const Divider(height: 1, color: AppColors.divider),
-                    _buildSummaryRow('Visitor Type', visitor.visitorType),
+                    _buildSummaryRow(AppConstants.labelVisitorType, visitor.visitorType),
                     const Divider(height: 1, color: AppColors.divider),
                     _buildSummaryRow(
-                      isCheckIn ? 'Check-In Time' : 'Check-Out Time',
+                      isCheckIn ? AppConstants.labelCheckInTime : AppConstants.labelCheckOutTime,
                       DateFormatter.formatDateTime(timestamp),
                     ),
                   ],
@@ -139,7 +140,7 @@ class StatusSuccessScreen extends StatelessWidget {
 
               // OK Button
               CustomButton(
-                text: 'OK',
+                text: AppConstants.ok,
                 onPressed: () {
                   Navigator.of(context).pop();
                 },

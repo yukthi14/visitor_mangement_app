@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/widgets/status_chip.dart';
 import '../../../data/models/visitor_model.dart';
 
@@ -125,7 +126,7 @@ class _QRDisplayScreenState extends State<QRDisplayScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'QR Code downloaded to Downloads folder: $filePath',
+                    '${AppConstants.qrDownloadedPrefix} $filePath',
                     style: const TextStyle(color: AppColors.white),
                   ),
                 ),
@@ -151,7 +152,7 @@ class _QRDisplayScreenState extends State<QRDisplayScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Failed to download QR code: $e',
+                    '${AppConstants.qrDownloadFailedPrefix} $e',
                     style: const TextStyle(color: AppColors.white),
                   ),
                 ),
@@ -169,7 +170,7 @@ class _QRDisplayScreenState extends State<QRDisplayScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Visitor QR Code'),
+        title: const Text(AppConstants.titleVisitorQRCode),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
@@ -251,7 +252,7 @@ class _QRDisplayScreenState extends State<QRDisplayScreen> {
 
                       // Visitor ID label & code
                       const Text(
-                        'Visitor ID',
+                        AppConstants.labelVisitorId,
                         style: TextStyle(
                           fontSize: 12,
                           color: AppColors.textSecondary,
@@ -270,7 +271,7 @@ class _QRDisplayScreenState extends State<QRDisplayScreen> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Purpose: ${widget.visitor.purpose}',
+                        '${AppConstants.labelPurpose}: ${widget.visitor.purpose}',
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.textMuted,
@@ -305,7 +306,7 @@ class _QRDisplayScreenState extends State<QRDisplayScreen> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Saved: $savedPath',
+                          '${AppConstants.qrSavedPrefix} $savedPath',
                           style: const TextStyle(
                             fontSize: 12,
                             color: AppColors.statusCheckedInText,
@@ -336,7 +337,7 @@ class _QRDisplayScreenState extends State<QRDisplayScreen> {
                         )
                       : const Icon(Icons.download_rounded, size: 20),
                   label: Text(
-                    _isDownloading ? 'Saving to Downloads...' : 'Download QR Code',
+                    _isDownloading ? AppConstants.savingToDownloads : AppConstants.downloadQRCode,
                     style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                   style: ElevatedButton.styleFrom(
@@ -352,7 +353,7 @@ class _QRDisplayScreenState extends State<QRDisplayScreen> {
 
               const SizedBox(height: 20),
               const Text(
-                'Show this QR code at the security desk upon arrival',
+                AppConstants.qrSecurityNotice,
                 style: TextStyle(
                   fontSize: 13,
                   color: AppColors.textSecondary,

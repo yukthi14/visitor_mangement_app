@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../core/widgets/shimmer_loading.dart';
 import '../../../core/widgets/stat_card.dart';
 import '../../../logic/blocs/auth/auth_bloc.dart';
 import '../../../logic/blocs/auth/auth_event.dart';
+import '../../../logic/blocs/auth/auth_state.dart';
 import '../../../logic/blocs/visitor/visitor_bloc.dart';
 import '../../../logic/blocs/visitor/visitor_event.dart';
 import '../../../logic/blocs/visitor/visitor_state.dart';
@@ -76,11 +78,13 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final todayFormatted = DateFormatter.formatHeaderDate(DateTime.now());
+    final authState = context.watch<AuthBloc>().state;
+    final userName = authState is Authenticated ? authState.username : AppConstants.defaultUser;
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Visitor Management'),
+        title: const Text(AppConstants.appName),
         centerTitle: true,
         leading: Builder(
           builder: (ctx) => IconButton(
@@ -90,16 +94,6 @@ class DashboardScreen extends StatelessWidget {
             },
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none_rounded),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('No new notifications')),
-              );
-            },
-          ),
-        ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -110,27 +104,27 @@ class DashboardScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: const [
-                  CircleAvatar(
+                children: [
+                  const CircleAvatar(
                     radius: 28,
                     backgroundColor: AppColors.white,
                     child: Icon(Icons.person, color: AppColors.primary, size: 36),
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   Text(
-                    'Front Desk Security',
-                    style: TextStyle(color: AppColors.white, fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'admin@realestate.com',
-                    style: TextStyle(color: AppColors.whiteOpacity70, fontSize: 13),
+                    userName,
+                    style: const TextStyle(
+                      color: AppColors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
             ),
             ListTile(
               leading: const Icon(Icons.home_outlined, color: AppColors.primary),
-              title: const Text('Dashboard'),
+              title: const Text(AppConstants.titleDashboard),
               onTap: () {
                 Navigator.of(context).pop();
                 onNavigateToTab?.call(0);
@@ -138,7 +132,7 @@ class DashboardScreen extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.people_outline, color: AppColors.primary),
-              title: const Text('Visitor List'),
+              title: const Text(AppConstants.titleVisitorList),
               onTap: () {
                 Navigator.of(context).pop();
                 onNavigateToTab?.call(1);
@@ -146,7 +140,7 @@ class DashboardScreen extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.qr_code_scanner, color: AppColors.primary),
-              title: const Text('Scan QR Code'),
+              title: const Text(AppConstants.titleScanQR),
               onTap: () {
                 Navigator.of(context).pop();
                 onNavigateToTab?.call(2);
@@ -154,7 +148,7 @@ class DashboardScreen extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.bar_chart_outlined, color: AppColors.primary),
-              title: const Text('Visitor Statistics'),
+              title: const Text(AppConstants.titleStatistics),
               onTap: () {
                 Navigator.of(context).pop();
                 onNavigateToTab?.call(3);
@@ -164,7 +158,7 @@ class DashboardScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.logout_rounded, color: AppColors.danger),
               title: const Text(
-                'Log Out',
+                AppConstants.labelLogOut,
                 style: TextStyle(
                   color: AppColors.danger,
                   fontWeight: FontWeight.w600,
@@ -261,7 +255,7 @@ class DashboardScreen extends StatelessWidget {
 
                   // Quick Actions Header
                   const Text(
-                    'Quick Actions',
+                    AppConstants.quickActions,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -275,7 +269,7 @@ class DashboardScreen extends StatelessWidget {
                     children: [
                       // Register Visitor
                       _buildQuickActionItem(
-                        title: 'Register\nVisitor',
+                        title: AppConstants.actionRegisterVisitor,
                         icon: Icons.add,
                         iconBgColor: AppColors.primary,
                         iconColor: AppColors.white,
@@ -291,7 +285,7 @@ class DashboardScreen extends StatelessWidget {
 
                       // Visitor List
                       _buildQuickActionItem(
-                        title: 'Visitor\nList',
+                        title: AppConstants.actionVisitorList,
                         icon: Icons.format_list_bulleted_rounded,
                         iconBgColor: AppColors.statusCheckedInText,
                         iconColor: AppColors.white,
@@ -305,7 +299,7 @@ class DashboardScreen extends StatelessWidget {
 
                       // Scan QR Code
                       _buildQuickActionItem(
-                        title: 'Scan\nQR Code',
+                        title: AppConstants.actionScanQRCode,
                         icon: Icons.qr_code_scanner_rounded,
                         iconBgColor: AppColors.statusCheckedOutText,
                         iconColor: AppColors.white,

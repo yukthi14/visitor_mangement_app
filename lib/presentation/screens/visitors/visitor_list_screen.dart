@@ -56,7 +56,7 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        'Filter Visitors',
+                        AppConstants.filterVisitorsTitle,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -78,14 +78,14 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
                               );
                           Navigator.of(ctx).pop();
                         },
-                        child: const Text('Reset'),
+                        child: const Text(AppConstants.reset),
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
 
                   // Project filter
-                  const Text('Project', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                  const Text(AppConstants.labelProject, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -119,7 +119,7 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
                   const SizedBox(height: 16),
 
                   // Status filter
-                  const Text('Status', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                  const Text(AppConstants.labelStatus, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -167,8 +167,8 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
   void _confirmDelete(VisitorModel visitor) async {
     final confirmed = await ConfirmDeleteDialog.show(
       context,
-      title: 'Delete Visitor',
-      message: 'Are you sure you want to delete ${visitor.name} (${visitor.id})?',
+      title: AppConstants.dialogDeleteTitle,
+      message: '${AppConstants.dialogDeletePrompt} ${visitor.name} (${visitor.id})?',
     );
 
     if (confirmed == true && mounted) {
@@ -182,7 +182,7 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
       backgroundColor: AppColors.background,
       appBar: widget.showAppBar
           ? AppBar(
-              title: const Text('Visitor Management'),
+              title: const Text(AppConstants.titleVisitorList),
               centerTitle: true,
               actions: [
                 IconButton(
@@ -215,15 +215,15 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
         },
         builder: (context, state) {
           if (state is VisitorLoading) {
-            return const LoadingView(message: 'Loading visitors...');
+            return const LoadingView(message: AppConstants.loadingVisitors);
           }
 
           if (state is VisitorError) {
             return EmptyStateView(
               icon: Icons.error_outline_rounded,
-              title: 'Error loading visitors',
+              title: AppConstants.errorLoadingVisitors,
               message: state.message,
-              actionText: 'Retry',
+              actionText: AppConstants.retry,
               onAction: () => context.read<VisitorBloc>().add(const LoadVisitors(isRefresh: true)),
             );
           }
@@ -246,7 +246,7 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
                       controller: _searchController,
                       onChanged: _onSearchChanged,
                       decoration: InputDecoration(
-                        hintText: 'Search by name or mobile number',
+                        hintText: AppConstants.searchHint,
                         hintStyle: const TextStyle(
                           color: AppColors.textMuted,
                           fontSize: 14,
@@ -285,7 +285,7 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
                         const Icon(Icons.filter_alt, size: 14, color: AppColors.primary),
                         const SizedBox(width: 6),
                         Text(
-                          'Filtered by: ${[_selectedProjectFilter, _selectedStatusFilter].where((e) => e != null).join(', ')}',
+                          '${AppConstants.filteredBy} ${[_selectedProjectFilter, _selectedStatusFilter].where((e) => e != null).join(', ')}',
                           style: const TextStyle(fontSize: 12, color: AppColors.primary, fontWeight: FontWeight.w600),
                         ),
                         const Spacer(),
@@ -316,11 +316,11 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
                             children: [
                               SizedBox(height: MediaQuery.of(context).size.height * 0.2),
                               EmptyStateView(
-                                title: state.searchQuery.isNotEmpty ? 'No matches found' : 'No Visitors Registered',
+                                title: state.searchQuery.isNotEmpty ? AppConstants.noMatchesFound : AppConstants.noVisitorsRegistered,
                                 message: state.searchQuery.isNotEmpty
-                                    ? 'No visitors found for "${state.searchQuery}"'
-                                    : 'Register a new visitor to get started',
-                                actionText: state.searchQuery.isEmpty ? 'Register Visitor' : null,
+                                    ? '${AppConstants.noVisitorsFound} "${state.searchQuery}"'
+                                    : AppConstants.registerNewVisitorPrompt,
+                                actionText: state.searchQuery.isEmpty ? AppConstants.registerVisitor : null,
                                 onAction: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(builder: (_) => const RegisterVisitorScreen()),

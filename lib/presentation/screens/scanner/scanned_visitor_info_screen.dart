@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/status_chip.dart';
 import '../../../data/models/visitor_model.dart';
@@ -61,7 +62,7 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
             ),
             title: const Text(
-              'Visitor Information',
+              AppConstants.titleVisitorInfo,
               style: TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 18,
@@ -149,7 +150,7 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
 
                   // Check In Button
                   CustomButton(
-                    text: 'Check In',
+                    text: AppConstants.actionCheckIn,
                     icon: Icons.login_rounded,
                     backgroundColor: AppColors.statusCheckedInText,
                     isLoading: isSubmitting && state.operationType == 'check_in',
@@ -165,7 +166,7 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
 
                   // Check Out Button
                   CustomButton(
-                    text: 'Check Out',
+                    text: AppConstants.actionCheckOut,
                     icon: Icons.logout_rounded,
                     isOutlined: true,
                     backgroundColor: AppColors.white,
@@ -184,7 +185,7 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
 
                   // View Details Button
                   CustomButton(
-                    text: 'View Details',
+                    text: AppConstants.viewDetails,
                     isOutlined: true,
                     borderColor: AppColors.border,
                     textColor: AppColors.textPrimary,

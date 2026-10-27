@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
+import '../constants/app_constants.dart';
 
 class ConfirmDeleteDialog extends StatelessWidget {
   final String title;
@@ -8,15 +9,15 @@ class ConfirmDeleteDialog extends StatelessWidget {
 
   const ConfirmDeleteDialog({
     super.key,
-    this.title = 'Delete Visitor',
-    this.message = 'Are you sure you want to delete this visitor record?',
+    this.title = AppConstants.dialogDeleteTitle,
+    this.message = AppConstants.dialogDeleteMessage,
     required this.onConfirm,
   });
 
   static Future<bool?> show(
     BuildContext context, {
-    String title = 'Delete Visitor',
-    String message = 'Are you sure you want to delete this visitor record?',
+    String title = AppConstants.dialogDeleteTitle,
+    String message = AppConstants.dialogDeleteMessage,
   }) {
     return showDialog<bool>(
       context: context,
@@ -95,7 +96,7 @@ class ConfirmDeleteDialog extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     child: const Text(
-                      'Cancel',
+                      AppConstants.cancel,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -119,7 +120,7 @@ class ConfirmDeleteDialog extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     child: const Text(
-                      'Delete',
+                      AppConstants.delete,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,

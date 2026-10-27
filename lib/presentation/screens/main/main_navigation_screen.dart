@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_constants.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../scanner/qr_scanner_screen.dart';
 import '../statistics/statistics_screen.dart';
@@ -61,22 +62,22 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
               activeIcon: Icon(Icons.home),
-              label: 'Home',
+              label: AppConstants.navHome,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.people_outline_rounded),
               activeIcon: Icon(Icons.people_rounded),
-              label: 'Visitors',
+              label: AppConstants.navVisitors,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.qr_code_scanner_rounded),
               activeIcon: Icon(Icons.qr_code_scanner_rounded),
-              label: 'Scan',
+              label: AppConstants.navScan,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.bar_chart_outlined),
               activeIcon: Icon(Icons.bar_chart_rounded),
-              label: 'Stats',
+              label: AppConstants.navStats,
             ),
           ],
         ),

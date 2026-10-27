@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
+import '../constants/app_constants.dart';
 
 enum StatCardType { totalToday, checkedIn, checkedOut }
 
@@ -23,14 +24,14 @@ class StatCard extends StatelessWidget {
 
     switch (type) {
       case StatCardType.totalToday:
-        title = 'Total Visitors\nToday';
+        title = AppConstants.statTotalToday;
         bgColor = AppColors.metricBlueBg;
         borderColor = AppColors.metricBlueBorder;
         countColor = AppColors.metricBlueText;
         iconWidget = const Icon(Icons.person, size: 20, color: AppColors.primary);
         break;
       case StatCardType.checkedIn:
-        title = 'Currently\nChecked In';
+        title = AppConstants.statCheckedIn;
         bgColor = AppColors.metricGreenBg;
         borderColor = AppColors.metricGreenBorder;
         countColor = AppColors.metricGreenText;
@@ -45,7 +46,7 @@ class StatCard extends StatelessWidget {
         );
         break;
       case StatCardType.checkedOut:
-        title = 'Checked Out\nToday';
+        title = AppConstants.statCheckedOut;
         bgColor = AppColors.metricPurpleBg;
         borderColor = AppColors.metricPurpleBorder;
         countColor = AppColors.metricPurpleText;

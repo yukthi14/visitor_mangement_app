@@ -59,7 +59,7 @@ class _RegisterVisitorScreenState extends State<RegisterVisitorScreen> {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedVisitorType == null || _selectedProject == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select visitor type and project')),
+        const SnackBar(content: Text(AppConstants.errorSelectTypeAndProject)),
       );
       return;
     }
@@ -92,8 +92,8 @@ class _RegisterVisitorScreenState extends State<RegisterVisitorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final title = isEditMode ? 'Edit Visitor' : 'Register Visitor';
-    final buttonText = isEditMode ? 'Update' : 'Save';
+    final title = isEditMode ? AppConstants.titleEditVisitor : AppConstants.titleRegisterVisitor;
+    final buttonText = isEditMode ? AppConstants.btnUpdate : AppConstants.btnSave;
 
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -163,8 +163,8 @@ class _RegisterVisitorScreenState extends State<RegisterVisitorScreen> {
                         children: [
                           // Visitor Name
                           CustomTextField(
-                            label: 'Visitor Name',
-                            hintText: 'Enter visitor name',
+                            label: AppConstants.labelVisitorName,
+                            hintText: AppConstants.hintVisitorName,
                             controller: _nameController,
                             isRequired: true,
                             validator: Validators.validateName,
@@ -173,8 +173,8 @@ class _RegisterVisitorScreenState extends State<RegisterVisitorScreen> {
 
                           // Mobile Number
                           CustomTextField(
-                            label: 'Mobile Number',
-                            hintText: 'Enter 10 digit mobile number',
+                            label: AppConstants.labelMobileNumber,
+                            hintText: AppConstants.hintMobileNumber,
                             controller: _mobileController,
                             keyboardType: TextInputType.phone,
                             isRequired: true,
@@ -184,8 +184,8 @@ class _RegisterVisitorScreenState extends State<RegisterVisitorScreen> {
 
                           // Email
                           CustomTextField(
-                            label: 'Email (Optional)',
-                            hintText: 'Enter email address',
+                            label: AppConstants.labelEmailOptional,
+                            hintText: AppConstants.hintEmail,
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
                             validator: Validators.validateEmail,
@@ -194,8 +194,8 @@ class _RegisterVisitorScreenState extends State<RegisterVisitorScreen> {
 
                           // Visitor Type
                           CustomDropdown<String>(
-                            label: 'Visitor Type',
-                            hintText: 'Select visitor type',
+                            label: AppConstants.labelVisitorType,
+                            hintText: AppConstants.hintVisitorType,
                             value: _selectedVisitorType,
                             items: AppConstants.visitorTypes,
                             itemLabelBuilder: (item) => item,
@@ -210,8 +210,8 @@ class _RegisterVisitorScreenState extends State<RegisterVisitorScreen> {
 
                           // Project
                           CustomDropdown<String>(
-                            label: 'Project',
-                            hintText: 'Select project',
+                            label: AppConstants.labelProject,
+                            hintText: AppConstants.hintProject,
                             value: _selectedProject,
                             items: AppConstants.projects,
                             itemLabelBuilder: (item) => item,
@@ -226,12 +226,12 @@ class _RegisterVisitorScreenState extends State<RegisterVisitorScreen> {
 
                           // Purpose of Visit
                           CustomTextField(
-                            label: 'Purpose of Visit',
-                            hintText: 'Enter purpose of visit',
+                            label: AppConstants.labelPurpose,
+                            hintText: AppConstants.hintPurpose,
                             controller: _purposeController,
                             isRequired: true,
                             maxLines: 2,
-                            validator: (val) => Validators.validateRequired(val, 'Purpose of visit'),
+                            validator: (val) => Validators.validateRequired(val, AppConstants.labelPurpose),
                           ),
                           const SizedBox(height: 24),
                         ],

@@ -2,13 +2,11 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../core/widgets/shimmer_loading.dart';
-import '../../../logic/blocs/auth/auth_bloc.dart';
-import '../../../logic/blocs/auth/auth_event.dart';
 import '../../../logic/blocs/visitor/visitor_bloc.dart';
 import '../../../logic/blocs/visitor/visitor_state.dart';
-import '../auth/login_screen.dart';
 
 class StatisticsScreen extends StatefulWidget {
   final bool showAppBar;
@@ -28,21 +26,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       backgroundColor: AppColors.background,
       appBar: widget.showAppBar
           ? AppBar(
-              title: const Text('Visitor Statistics'),
+              title: const Text(AppConstants.titleStatistics),
               centerTitle: true,
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.logout_rounded),
-                  tooltip: 'Logout',
-                  onPressed: () {
-                    context.read<AuthBloc>().add(LogoutRequested());
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (_) => const LoginScreen()),
-                      (route) => false,
-                    );
-                  },
-                ),
-              ],
             )
           : null,
       body: BlocBuilder<VisitorBloc, VisitorState>(
@@ -59,9 +44,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           if (state is VisitorLoaded) {
             totalVisitors = state.allVisitors.length;
             for (var v in state.allVisitors) {
-              if (v.visitorType == 'Customer') {
+              if (v.visitorType == AppConstants.typeCustomer) {
                 totalCustomers++;
-              } else if (v.visitorType == 'Vendor') {
+              } else if (v.visitorType == AppConstants.typeVendor) {
                 totalVendors++;
               } else {
                 totalOthers++;
@@ -120,9 +105,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _buildLegendItem(AppColors.statusCheckedInText, 'Checked In'),
+                          _buildLegendItem(AppColors.statusCheckedInText, AppConstants.statusCheckedIn),
                           const SizedBox(width: 24),
-                          _buildLegendItem(AppColors.statusCheckedOutText, 'Checked Out'),
+                          _buildLegendItem(AppColors.statusCheckedOutText, AppConstants.statusCheckedOut),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -152,7 +137,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Visitor Type',
+                        AppConstants.labelVisitorType,
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -182,7 +167,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     const Text(
-                                      'Total',
+                                      AppConstants.labelTotal,
                                       style: TextStyle(
                                         fontSize: 11,
                                         color: AppColors.textSecondary,
@@ -209,19 +194,19 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                               children: [
                                 _buildTypeCountRow(
                                   AppColors.statusCheckedInText,
-                                  'Customer',
+                                  AppConstants.typeCustomer,
                                   totalCustomers > 0 ? totalCustomers : 8,
                                 ),
                                 const Divider(height: 16, color: AppColors.divider),
                                 _buildTypeCountRow(
                                   AppColors.primary,
-                                  'Vendor',
+                                  AppConstants.typeVendor,
                                   totalVendors > 0 ? totalVendors : 5,
                                 ),
                                 const Divider(height: 16, color: AppColors.divider),
                                 _buildTypeCountRow(
                                   AppColors.textMuted,
-                                  'Other',
+                                  AppConstants.typeOther,
                                   totalOthers > 0 ? totalOthers : 2,
                                 ),
                               ],
