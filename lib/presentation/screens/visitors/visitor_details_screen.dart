@@ -335,24 +335,7 @@ class VisitorDetailsScreen extends StatelessWidget {
                           ),
                         ),
                       ],
-
                       const SizedBox(width: 12),
-
-                      // Edit Button
-                      Expanded(
-                        flex: 1,
-                        child: CustomButton(
-                          text: 'Edit',
-                          isOutlined: true,
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => RegisterVisitorScreen(visitorToEdit: currentVisitor),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
                     ],
                   ),
                 ),
