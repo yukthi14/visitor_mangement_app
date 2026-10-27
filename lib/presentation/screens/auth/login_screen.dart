@@ -199,55 +199,55 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  const Center(
-                    child: Text(
-                      AppConstants.welcomeBack,
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: 48),
 
                   // Username Field
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.inputFill,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: _usernameError != null ? AppColors.danger : AppColors.border,
-                        width: _usernameError != null ? 1.2 : 1.0,
+                  TextField(
+                    controller: _usernameController,
+                    onChanged: (val) {
+                      if (_usernameError != null) {
+                        setState(() {
+                          _usernameError = null;
+                        });
+                      }
+                      if (_rememberMe) {
+                        SharedPreferences.getInstance().then((prefs) {
+                          prefs.setString(AppConstants.prefRememberedUsername, val.trim());
+                        });
+                      }
+                    },
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: AppColors.inputFill,
+                      hintText: AppConstants.labelUsername,
+                      hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 14),
+                      prefixIcon: Icon(
+                        Icons.person_outline,
+                        color: _usernameError != null ? AppColors.danger : AppColors.textSecondary,
+                        size: 20,
                       ),
-                    ),
-                    child: TextField(
-                      controller: _usernameController,
-                      onChanged: (val) {
-                        if (_usernameError != null) {
-                          setState(() {
-                            _usernameError = null;
-                          });
-                        }
-                        if (_rememberMe) {
-                          SharedPreferences.getInstance().then((prefs) {
-                            prefs.setString(AppConstants.prefRememberedUsername, val.trim());
-                          });
-                        }
-                      },
-                      decoration: InputDecoration(
-                        hintText: AppConstants.labelUsername,
-                        hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 14),
-                        prefixIcon: Icon(
-                          Icons.person_outline,
-                          color: _usernameError != null ? AppColors.danger : AppColors.textSecondary,
-                          size: 20,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color: _usernameError != null ? AppColors.danger : AppColors.border,
+                          width: _usernameError != null ? 1.5 : 1.0,
                         ),
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color: _usernameError != null ? AppColors.danger : AppColors.border,
+                          width: _usernameError != null ? 1.5 : 1.0,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color: _usernameError != null ? AppColors.danger : AppColors.primary,
+                          width: 1.5,
+                        ),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     ),
                   ),
                   if (_usernameError != null) ...[
@@ -275,50 +275,60 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 16),
 
                   // Password Field
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.inputFill,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: _passwordError != null ? AppColors.danger : AppColors.border,
-                        width: _passwordError != null ? 1.2 : 1.0,
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: _obscurePassword,
+                    onChanged: (_) {
+                      if (_passwordError != null) {
+                        setState(() {
+                          _passwordError = null;
+                        });
+                      }
+                    },
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: AppColors.inputFill,
+                      hintText: AppConstants.labelPassword,
+                      hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 14),
+                      prefixIcon: Icon(
+                        Icons.lock_outline,
+                        color: _passwordError != null ? AppColors.danger : AppColors.textSecondary,
+                        size: 20,
                       ),
-                    ),
-                    child: TextField(
-                      controller: _passwordController,
-                      obscureText: _obscurePassword,
-                      onChanged: (_) {
-                        if (_passwordError != null) {
-                          setState(() {
-                            _passwordError = null;
-                          });
-                        }
-                      },
-                      decoration: InputDecoration(
-                        hintText: AppConstants.labelPassword,
-                        hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 14),
-                        prefixIcon: Icon(
-                          Icons.lock_outline,
-                          color: _passwordError != null ? AppColors.danger : AppColors.textSecondary,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                          color: AppColors.textSecondary,
                           size: 20,
                         ),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                            color: AppColors.textSecondary,
-                            size: 20,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _obscurePassword = !_obscurePassword;
-                            });
-                          },
-                        ),
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
                       ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color: _passwordError != null ? AppColors.danger : AppColors.border,
+                          width: _passwordError != null ? 1.5 : 1.0,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color: _passwordError != null ? AppColors.danger : AppColors.border,
+                          width: _passwordError != null ? 1.5 : 1.0,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color: _passwordError != null ? AppColors.danger : AppColors.primary,
+                          width: 1.5,
+                        ),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     ),
                   ),
                   if (_passwordError != null) ...[
