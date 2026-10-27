@@ -1,5 +1,6 @@
-import 'dart:convert';
 import 'package:equatable/equatable.dart';
+import '../../core/constants/app_constants.dart';
+import '../../core/utils/date_formatter.dart';
 
 class VisitorModel extends Equatable {
   final String id;
@@ -111,20 +112,26 @@ class VisitorModel extends Equatable {
     };
   }
 
-  /// Formats visitor data for QR encoding so scanning displays visitor ID, status, and details
+  /// Formats visitor data into a clean, human-readable pass that users and scanners can clearly understand
   String toQrData() {
-    return jsonEncode({
-      'visitor_id': id,
-      'name': name,
-      'status': status,
-      'mobile': mobile,
-      if (email != null && email!.isNotEmpty) 'email': email,
-      'visitor_type': visitorType,
-      'project': project,
-      'purpose': purpose,
-      if (checkInTime != null) 'check_in_time': checkInTime,
-      if (checkOutTime != null) 'check_out_time': checkOutTime,
-    });
+    final buffer = StringBuffer();
+    buffer.writeln('${AppConstants.labelExtractedVisitorId} $id');
+    buffer.writeln('${AppConstants.labelStatusWithColon} $status');
+    buffer.writeln('${AppConstants.labelVisitorName} : $name');
+    buffer.writeln('${AppConstants.labelMobileNumber} : $mobile');
+    if (email != null && email!.trim().isNotEmpty) {
+      buffer.writeln('${AppConstants.labelEmail} : ${email!.trim()}');
+    }
+    buffer.writeln('${AppConstants.labelVisitorType} : $visitorType');
+    buffer.writeln('${AppConstants.labelProject} : $project');
+    buffer.writeln('${AppConstants.labelPurpose} : $purpose');
+    if (checkInTime != null && checkInTime!.isNotEmpty) {
+      buffer.writeln('${AppConstants.labelCheckInTime} : ${DateFormatter.formatDateTime(checkInTime)}');
+    }
+    if (checkOutTime != null && checkOutTime!.isNotEmpty) {
+      buffer.writeln('${AppConstants.labelCheckOutTime} : ${DateFormatter.formatDateTime(checkOutTime)}');
+    }
+    return buffer.toString().trim();
   }
 
   @override

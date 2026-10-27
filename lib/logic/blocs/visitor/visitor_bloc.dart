@@ -315,11 +315,20 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
     }
   }
 
-  String? extractVisitorId(String rawQr) {
+  static String? extractVisitorId(String rawQr) {
     final trimmed = rawQr.trim();
     if (trimmed.isEmpty) return null;
 
-    // 1. JSON payload e.g. {"id": "VST001"} or {"visitor_id": "VST001"}
+    // 1. Labeled pattern e.g. "Extract the visitor ID : VST001" or "Visitor ID : VST001"
+    final labeledMatch = RegExp(
+      r'(?:extract\s*the\s*visitor\s*id|visitor\s*id)\s*[:=-]\s*([a-zA-Z0-9_-]+)',
+      caseSensitive: false,
+    ).firstMatch(trimmed);
+    if (labeledMatch != null) {
+      return labeledMatch.group(1)!.trim().toUpperCase();
+    }
+
+    // 2. JSON payload e.g. {"id": "VST001"} or {"visitor_id": "VST001"}
     if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
       try {
         final decoded = jsonDecode(trimmed);

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:visitor_mangement_app/core/utils/validators.dart';
 import 'package:visitor_mangement_app/data/models/visitor_model.dart';
+import 'package:visitor_mangement_app/logic/blocs/visitor/visitor_bloc.dart';
 
 void main() {
   group('VisitorModel Tests', () {
@@ -58,6 +59,39 @@ void main() {
       final checkedOut = checkedIn.copyWith(status: 'Checked Out', checkOutTime: '2026-10-26T11:30:00');
       expect(checkedOut.canCheckIn, isFalse);
       expect(checkedOut.canCheckOut, isFalse);
+    });
+
+    test('VisitorModel toQrData formats as clean human-readable text not raw JSON', () {
+      const visitor = VisitorModel(
+        id: 'VST001',
+        name: 'Rahul Sharma',
+        mobile: '9876543210',
+        email: 'rahul@example.com',
+        visitorType: 'Customer',
+        project: 'Project A',
+        purpose: 'Site Visit',
+        status: 'Registered',
+        createdAt: '2026-10-26T10:00:00',
+      );
+
+      final qrText = visitor.toQrData();
+
+      // Ensure it is not raw JSON
+      expect(qrText.startsWith('{'), isFalse);
+      expect(qrText.endsWith('}'), isFalse);
+
+      // Ensure key human-readable labels are present
+      expect(qrText, contains('Extract the visitor ID : VST001'));
+      expect(qrText, contains('Status : Registered'));
+      expect(qrText, contains('Visitor Name : Rahul Sharma'));
+      expect(qrText, contains('Mobile Number : 9876543210'));
+      expect(qrText, contains('Visitor Type : Customer'));
+      expect(qrText, contains('Project : Project A'));
+      expect(qrText, contains('Purpose of Visit : Site Visit'));
+
+      // Ensure VisitorBloc.extractVisitorId correctly parses this human-readable text
+      final extractedId = VisitorBloc.extractVisitorId(qrText);
+      expect(extractedId, 'VST001');
     });
   });
 
