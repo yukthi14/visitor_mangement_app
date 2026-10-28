@@ -58,19 +58,31 @@ The application was developed and verified against the following stable environm
 
 ## 4. State Management Approach
 
-The application uses the **BLoC (Business Logic Component)** pattern (`flutter_bloc` v8.1.6) combined with `equatable` to ensure predictable, unidirectional data flow and clean separation between UI and business logic.
+The application uses the **BLoC (Business Logic Component)** pattern (`flutter_bloc` v8.1.6) combined with `equatable` (for states and models) to ensure predictable, unidirectional data flow and clean separation between UI and business logic.
+
+### Architectural Decisions & Equatable Usage
+
+- **States & Models use `Equatable`**: State classes (`VisitorState`, `AuthState`, `ThemeState`) and data models (`VisitorModel`) extend `Equatable`. This enables value-based equality comparison so that `BlocBuilder` and `BlocConsumer` re-render UI components only when state properties actually change (`previous != current`), preventing redundant widget rebuilds.
+- **Events do NOT use `Equatable`**: Following Flutter BLoC best practices, event classes intentionally do not extend or use `Equatable`. Events represent actions and user intents rather than persistent state data. By leaving events without `Equatable`:
+  - Repetitive or identical consecutive events (e.g., consecutive refresh requests, re-submitting data, or repeated button taps) are dispatched and processed reliably without being suppressed by value equality.
+  - Boilerplate code (`props` overrides) is eliminated from all event definitions.
 
 ### BLoC Structure
 
 - **`AuthBloc`**:
-  - **Events**: `LoginSubmitted`, `LogoutRequested`, `CheckAuthStatus`.
+  - **Events**: `AppStarted`, `LoginSubmitted`, `LogoutRequested`.
   - **States**: `AuthInitial`, `AuthLoading`, `Authenticated`, `Unauthenticated`, `AuthFailure`.
   - Manages front desk credentials and session persistence via `SharedPreferences`.
 
 - **`VisitorBloc`**:
-  - **Events**: `LoadVisitors`, `RegisterVisitorSubmitted`, `UpdateVisitorSubmitted`, `CheckInVisitorRequested`, `CheckOutVisitorRequested`, `DeleteVisitorRequested`, `SearchVisitors`, `FilterVisitors`, `ScanVisitorRequested`, `SelectVisitor`.
+  - **Events**: `LoadVisitors`, `SearchVisitors`, `FilterVisitors`, `RegisterVisitorSubmitted`, `UpdateVisitorSubmitted`, `CheckInVisitorRequested`, `CheckOutVisitorRequested`, `DeleteVisitorRequested`, `ScanVisitorRequested`, `SelectVisitor`, `ClearSelectedVisitor`, `UpdateBaseUrlRequested`.
   - **States**: `VisitorInitial`, `VisitorLoading`, `VisitorLoaded`, `VisitorError`.
   - Manages visitor list, query filters, repository coordination, QR parsing, and optimistic UI updates.
+
+- **`ThemeBloc`**:
+  - **Events**: `LoadThemeMode`, `ChangeThemeMode`.
+  - **States**: `ThemeState`.
+  - Manages dynamic light, dark, and system theme modes and persists preferences via `SharedPreferences`.
 
 ### Unidirectional Data Flow
 
@@ -94,7 +106,7 @@ UI (BlocBuilder / BlocConsumer re-renders)
 | Package | Version | Purpose |
 | :--- | :--- | :--- |
 | `flutter_bloc` | `^8.1.6` | Predictable state management with BLoC pattern |
-| `equatable` | `^2.0.5` | Value-based equality for states and models without boilerplate |
+| `equatable` | `^2.0.5` | Value-based equality for states and models (events intentionally do not use Equatable) |
 | `mobile_scanner` | `^6.0.4` | High-performance native camera QR and barcode scanner |
 | `qr_flutter` | `^4.1.0` | Vector and raster QR code generation |
 | `http` | `^1.2.2` | REST API communication over HTTP/HTTPS |
@@ -221,12 +233,12 @@ Visual overview of the key screens and workflows in the Visitor Management appli
 | <img src="screenshots/02_visitor_list.png" width="240" alt="Visitor List Screen" /> | <img src="screenshots/03_visitor_registration.png" width="240" alt="Visitor Registration Screen" /> | <img src="screenshots/04_visitor_details_qr.png" width="240" alt="Visitor Details & QR Code Screen" /> |
 | **Visitor List**<br>Searchable directory by name/mobile, project & type tags, status badges, and edit/delete actions | **Visitor Registration**<br>Validated form inputs (10-digit mobile, email format, dropdowns) | **Visitor Details & QR Code**<br>Full visitor profile, scannable QR badge, and instant check-in/out |
 
-### QR Code Scanning & Verification Workflow
+### QR Scanner
 
-| Active Camera Scanner | Invalid QR Code Alert | Scanned Visitor Information |
-| :---: | :---: | :---: |
-| <img src="screenshots/05_qr_scanner.png" width="240" alt="Camera QR Scanner" /> | <img src="screenshots/05_qr_invalid_dialog.png" width="240" alt="Invalid QR Alert Dialog" /> | <img src="screenshots/05_scanned_visitor_info.png" width="240" alt="Scanned Visitor Information" /> |
-| **Real-Time Camera Scanner**<br>Camera viewfinder with alignment frame, flash toggle, and manual ID fallback | **Invalid QR Validation**<br>Security check rejecting unrecognized passes with a clear alert message | **Extracted Visitor Information**<br>Extracted Visitor ID, live status, full profile, and Check In / Check Out actions |
+| Scanned Badge Detection | Active Camera Scanner | Invalid QR Code Alert | Scanned Visitor Information |
+| :---: | :---: | :---: | :---: |
+| <img src="screenshots/05_qr_scanner_detection.png" width="200" alt="QR Scanner Badge Detection" /> | <img src="screenshots/05_qr_scanner.png" width="200" alt="Camera QR Scanner" /> | <img src="screenshots/05_qr_invalid_dialog.png" width="200" alt="Invalid QR Alert Dialog" /> | <img src="screenshots/05_scanned_visitor_info.png" width="200" alt="Scanned Visitor Information" /> |
+| **Badge Detection & Parsing**<br>Live scanning displaying extracted Visitor ID (`VST001`), status, visitor name, mobile, and project | **Real-Time Camera Scanner**<br>Camera viewfinder with alignment frame, flash toggle, and manual ID fallback | **Invalid QR Validation**<br>Security check rejecting unrecognized passes with a clear alert message | **Extracted Visitor Information**<br>Extracted Visitor ID, live status, full profile, and Check In / Check Out actions |
 
 | Screen | Description | File Path |
 | :--- | :--- | :--- |
@@ -234,6 +246,7 @@ Visual overview of the key screens and workflows in the Visitor Management appli
 | **Visitor List** | Searchable and filterable visitor directory with status chips and quick actions | [`screenshots/02_visitor_list.png`](screenshots/02_visitor_list.png) |
 | **Visitor Registration** | Form with field validation for mobile number, email, visitor type, and project | [`screenshots/03_visitor_registration.png`](screenshots/03_visitor_registration.png) |
 | **Visitor Details & QR Code** | Full visitor profile, downloadable QR pass, and check-in/out timestamps | [`screenshots/04_visitor_details_qr.png`](screenshots/04_visitor_details_qr.png) |
+| **QR Scanner (Badge Detection)** | Scanned visitor pass extracting visitor ID, status, name, mobile, and project | [`screenshots/05_qr_scanner_detection.png`](screenshots/05_qr_scanner_detection.png) |
 | **QR Scanner (Live)** | Real-time camera viewfinder scanning visitor badge passes | [`screenshots/05_qr_scanner.png`](screenshots/05_qr_scanner.png) |
 | **QR Scanner (Validation Alert)** | Validation dialog alerting guard when an unregistered QR code is scanned | [`screenshots/05_qr_invalid_dialog.png`](screenshots/05_qr_invalid_dialog.png) |
 | **Scanned Visitor Information** | Extracted visitor ID banner, status badge, full details, and one-tap check in/out | [`screenshots/05_scanned_visitor_info.png`](screenshots/05_scanned_visitor_info.png) |
