@@ -8,6 +8,9 @@ import '../../../core/widgets/stat_card.dart';
 import '../../../logic/blocs/auth/auth_bloc.dart';
 import '../../../logic/blocs/auth/auth_event.dart';
 import '../../../logic/blocs/auth/auth_state.dart';
+import '../../../logic/blocs/theme/theme_bloc.dart';
+import '../../../logic/blocs/theme/theme_event.dart';
+import '../../../logic/blocs/theme/theme_state.dart';
 import '../../../logic/blocs/visitor/visitor_bloc.dart';
 import '../../../logic/blocs/visitor/visitor_event.dart';
 import '../../../logic/blocs/visitor/visitor_state.dart';
@@ -27,7 +30,127 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   DateTime _selectedDate = DateTime.now();
 
+  Widget _buildThemeOption({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Row(
+          children: [
+            Icon(
+              isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+              color: isSelected ? AppColors.primary : AppColors.textSecondaryColor(context),
+              size: 20,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: AppColors.textPrimaryColor(context),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondaryColor(context),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showThemeSelectionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return BlocBuilder<ThemeBloc, ThemeState>(
+          builder: (context, themeState) {
+            return AlertDialog(
+              backgroundColor: AppColors.surfaceColor(context),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              title: Text(
+                AppConstants.titleSelectTheme,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: AppColors.textPrimaryColor(context),
+                ),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildThemeOption(
+                    context: context,
+                    title: AppConstants.labelSystemDefault,
+                    subtitle: AppConstants.descSystemDefault,
+                    isSelected: themeState.themeMode == ThemeMode.system,
+                    onTap: () {
+                      context.read<ThemeBloc>().add(const ChangeThemeMode(ThemeMode.system));
+                      Navigator.of(ctx).pop();
+                    },
+                  ),
+                  const SizedBox(height: 4),
+                  _buildThemeOption(
+                    context: context,
+                    title: AppConstants.labelLightMode,
+                    subtitle: AppConstants.descLightMode,
+                    isSelected: themeState.themeMode == ThemeMode.light,
+                    onTap: () {
+                      context.read<ThemeBloc>().add(const ChangeThemeMode(ThemeMode.light));
+                      Navigator.of(ctx).pop();
+                    },
+                  ),
+                  const SizedBox(height: 4),
+                  _buildThemeOption(
+                    context: context,
+                    title: AppConstants.labelDarkMode,
+                    subtitle: AppConstants.descDarkMode,
+                    isSelected: themeState.themeMode == ThemeMode.dark,
+                    onTap: () {
+                      context.read<ThemeBloc>().add(const ChangeThemeMode(ThemeMode.dark));
+                      Navigator.of(ctx).pop();
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: const Text(
+                    AppConstants.cancel,
+                    style: TextStyle(color: AppColors.primary),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   Future<void> _pickDate() async {
+    final isDark = AppColors.isDark(context);
     final picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
@@ -37,11 +160,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.primary,
-              onPrimary: AppColors.white,
-              onSurface: AppColors.textPrimary,
-            ),
+            colorScheme: isDark
+                ? const ColorScheme.dark(
+                    primary: AppColors.primary,
+                    onPrimary: AppColors.white,
+                    surface: AppColors.darkSurface,
+                    onSurface: AppColors.darkTextPrimary,
+                  )
+                : const ColorScheme.light(
+                    primary: AppColors.primary,
+                    onPrimary: AppColors.white,
+                    surface: AppColors.white,
+                    onSurface: AppColors.textPrimary,
+                  ),
           ),
           child: child!,
         );
@@ -56,6 +187,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildQuickActionItem({
+    required BuildContext context,
     required String title,
     required IconData icon,
     required Color iconBgColor,
@@ -64,7 +196,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }) {
     return Expanded(
       child: Material(
-        color: AppColors.white,
+        color: AppColors.cardBgColor(context),
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
@@ -73,7 +205,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border),
+              border: Border.all(color: AppColors.borderColor(context)),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -95,10 +227,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Text(
                   title,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: AppColors.textPrimaryColor(context),
                     height: 1.2,
                   ),
                 ),
@@ -116,7 +248,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final userName = authState is Authenticated ? authState.username : AppConstants.defaultUser;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.backgroundColor(context),
       appBar: AppBar(
         title: const Text(AppConstants.appName),
         centerTitle: true,
@@ -128,8 +260,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
             },
           ),
         ),
+        actions: [
+          BlocBuilder<ThemeBloc, ThemeState>(
+            builder: (context, themeState) {
+              final isCurrentDark = themeState.isDarkMode(context);
+              return IconButton(
+                icon: Icon(
+                  isCurrentDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+                ),
+                tooltip: AppConstants.labelTheme,
+                onPressed: () => _showThemeSelectionDialog(context),
+              );
+            },
+          ),
+        ],
       ),
       drawer: Drawer(
+        backgroundColor: AppColors.surfaceColor(context),
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -186,6 +333,44 @@ class _DashboardScreenState extends State<DashboardScreen> {
               onTap: () {
                 Navigator.of(context).pop();
                 widget.onNavigateToTab?.call(3);
+              },
+            ),
+            const Divider(),
+            // Dark Mode Feature in Drawer Menu
+            BlocBuilder<ThemeBloc, ThemeState>(
+              builder: (context, themeState) {
+                final isCurrentDark = themeState.isDarkMode(context);
+
+                return ListTile(
+                  leading: Icon(
+                    isCurrentDark ? Icons.dark_mode : Icons.dark_mode_outlined,
+                    color: AppColors.primary,
+                  ),
+                  title: const Text(AppConstants.labelDarkMode),
+                  subtitle: Text(
+                    themeState.themeMode == ThemeMode.system
+                        ? AppConstants.labelSystemDefault
+                        : (themeState.themeMode == ThemeMode.dark
+                            ? AppConstants.labelDarkMode
+                            : AppConstants.labelLightMode),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondaryColor(context),
+                    ),
+                  ),
+                  trailing: Switch(
+                    value: isCurrentDark,
+                    activeThumbColor: AppColors.primary,
+                    onChanged: (bool value) {
+                      context.read<ThemeBloc>().add(
+                            ChangeThemeMode(value ? ThemeMode.dark : ThemeMode.light),
+                          );
+                    },
+                  ),
+                  onTap: () {
+                    _showThemeSelectionDialog(context);
+                  },
+                );
               },
             ),
             const Divider(),
@@ -258,7 +443,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Row(
                     children: [
                       Material(
-                        color: AppColors.white,
+                        color: AppColors.cardBgColor(context),
                         borderRadius: BorderRadius.circular(10),
                         child: InkWell(
                           onTap: _pickDate,
@@ -267,7 +452,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: AppColors.border),
+                              border: Border.all(color: AppColors.borderColor(context)),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -280,17 +465,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 const SizedBox(width: 8),
                                 Text(
                                   DateFormatter.formatHeaderDate(_selectedDate),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
-                                    color: AppColors.textPrimary,
+                                    color: AppColors.textPrimaryColor(context),
                                   ),
                                 ),
                                 const SizedBox(width: 4),
-                                const Icon(
+                                Icon(
                                   Icons.arrow_drop_down,
                                   size: 18,
-                                  color: AppColors.textSecondary,
+                                  color: AppColors.textSecondaryColor(context),
                                 ),
                               ],
                             ),
@@ -350,12 +535,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   const SizedBox(height: 28),
 
                   // Quick Actions Header
-                  const Text(
+                  Text(
                     AppConstants.quickActions,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: AppColors.textPrimaryColor(context),
                     ),
                   ),
                   const SizedBox(height: 14),
@@ -365,6 +550,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     children: [
                       // Register Visitor
                       _buildQuickActionItem(
+                        context: context,
                         title: AppConstants.actionRegisterVisitor,
                         icon: Icons.add,
                         iconBgColor: AppColors.primary,
@@ -381,6 +567,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                       // Visitor List
                       _buildQuickActionItem(
+                        context: context,
                         title: AppConstants.actionVisitorList,
                         icon: Icons.format_list_bulleted_rounded,
                         iconBgColor: AppColors.statusCheckedInText,
@@ -393,6 +580,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                       // Scan QR Code
                       _buildQuickActionItem(
+                        context: context,
                         title: AppConstants.actionScanQRCode,
                         icon: Icons.qr_code_scanner_rounded,
                         iconBgColor: AppColors.statusCheckedOutText,

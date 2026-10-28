@@ -5,12 +5,16 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/constants/app_colors.dart';
+import 'core/constants/app_constants.dart';
 import 'core/theme/app_theme.dart';
 import 'data/datasources/visitor_local_datasource.dart';
 import 'data/datasources/visitor_remote_datasource.dart';
 import 'data/repositories/visitor_repository.dart';
 import 'logic/blocs/auth/auth_bloc.dart';
 import 'logic/blocs/auth/auth_event.dart';
+import 'logic/blocs/theme/theme_bloc.dart';
+import 'logic/blocs/theme/theme_event.dart';
+import 'logic/blocs/theme/theme_state.dart';
 import 'logic/blocs/visitor/visitor_bloc.dart';
 import 'logic/blocs/visitor/visitor_event.dart';
 import 'presentation/screens/splash/splash_screen.dart';
@@ -62,6 +66,11 @@ class VisitorManagementApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<ThemeBloc>(
+          create: (context) => ThemeBloc(
+            sharedPreferences: sharedPreferences,
+          )..add(const LoadThemeMode()),
+        ),
         BlocProvider<AuthBloc>(
           create: (context) => AuthBloc(
             sharedPreferences: sharedPreferences,
@@ -73,11 +82,17 @@ class VisitorManagementApp extends StatelessWidget {
           )..add(const LoadVisitors()),
         ),
       ],
-      child: MaterialApp(
-        title: 'Visitor Management',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        home: const SplashScreen(),
+      child: BlocBuilder<ThemeBloc, ThemeState>(
+        builder: (context, themeState) {
+          return MaterialApp(
+            title: AppConstants.appName,
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeState.themeMode,
+            home: const SplashScreen(),
+          );
+        },
       ),
     );
   }

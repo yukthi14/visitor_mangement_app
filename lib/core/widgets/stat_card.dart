@@ -23,20 +23,21 @@ class StatCard extends StatelessWidget {
     Color borderColor;
     Color countColor;
     Widget iconWidget;
+    final isDark = AppColors.isDark(context);
 
     switch (type) {
       case StatCardType.totalToday:
         title = customTitle ?? AppConstants.statTotalToday;
-        bgColor = AppColors.metricBlueBg;
-        borderColor = AppColors.metricBlueBorder;
-        countColor = AppColors.metricBlueText;
+        bgColor = isDark ? AppColors.metricBlueBgDark : AppColors.metricBlueBg;
+        borderColor = isDark ? AppColors.metricBlueBorderDark : AppColors.metricBlueBorder;
+        countColor = isDark ? AppColors.metricBlueTextDark : AppColors.metricBlueText;
         iconWidget = const Icon(Icons.person, size: 20, color: AppColors.primary);
         break;
       case StatCardType.checkedIn:
         title = customTitle ?? AppConstants.statCheckedIn;
-        bgColor = AppColors.metricGreenBg;
-        borderColor = AppColors.metricGreenBorder;
-        countColor = AppColors.metricGreenText;
+        bgColor = isDark ? AppColors.metricGreenBgDark : AppColors.metricGreenBg;
+        borderColor = isDark ? AppColors.metricGreenBorderDark : AppColors.metricGreenBorder;
+        countColor = isDark ? AppColors.metricGreenTextDark : AppColors.metricGreenText;
         iconWidget = Container(
           width: 20,
           height: 20,
@@ -49,9 +50,9 @@ class StatCard extends StatelessWidget {
         break;
       case StatCardType.checkedOut:
         title = customTitle ?? AppConstants.statCheckedOut;
-        bgColor = AppColors.metricPurpleBg;
-        borderColor = AppColors.metricPurpleBorder;
-        countColor = AppColors.metricPurpleText;
+        bgColor = isDark ? AppColors.metricPurpleBgDark : AppColors.metricPurpleBg;
+        borderColor = isDark ? AppColors.metricPurpleBorderDark : AppColors.metricPurpleBorder;
+        countColor = isDark ? AppColors.metricPurpleTextDark : AppColors.metricPurpleText;
         iconWidget = const Icon(Icons.logout_rounded, size: 20, color: AppColors.statusCheckedOutText);
         break;
     }
@@ -72,10 +73,10 @@ class StatCard extends StatelessWidget {
             Text(
               title,
               maxLines: 2,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textSecondary,
+                color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
                 height: 1.2,
               ),
             ),

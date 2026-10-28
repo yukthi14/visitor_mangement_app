@@ -28,13 +28,22 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       lastDate: DateTime(2035),
       initialEntryMode: DatePickerEntryMode.calendarOnly,
       builder: (context, child) {
+        final isDark = AppColors.isDark(context);
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.primary,
-              onPrimary: AppColors.white,
-              onSurface: AppColors.textPrimary,
-            ),
+            colorScheme: isDark
+                ? const ColorScheme.dark(
+                    primary: AppColors.primary,
+                    onPrimary: AppColors.white,
+                    surface: AppColors.darkSurface,
+                    onSurface: AppColors.darkTextPrimary,
+                  )
+                : const ColorScheme.light(
+                    primary: AppColors.primary,
+                    onPrimary: AppColors.white,
+                    surface: AppColors.white,
+                    onSurface: AppColors.textPrimary,
+                  ),
           ),
           child: child!,
         );
@@ -51,7 +60,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.backgroundColor(context),
       appBar: widget.showAppBar
           ? AppBar(
               title: const Text(AppConstants.titleStatistics),
@@ -158,7 +167,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               children: [
                 // Date Selector Header Card (Interactive)
                 Material(
-                  color: AppColors.white,
+                  color: AppColors.cardBgColor(context),
                   borderRadius: BorderRadius.circular(12),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(12),
@@ -167,7 +176,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.border),
+                        border: Border.all(color: AppColors.borderColor(context)),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -178,15 +187,15 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                               const SizedBox(width: 10),
                               Text(
                                 DateFormatter.formatDate(_selectedDate.toIso8601String()),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                  color: AppColors.textPrimaryColor(context),
                                 ),
                               ),
                             ],
                           ),
-                          const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.textSecondary),
+                          Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.textSecondaryColor(context)),
                         ],
                       ),
                     ),
@@ -198,9 +207,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.white,
+                    color: AppColors.cardBgColor(context),
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(color: AppColors.borderColor(context)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,19 +246,19 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.white,
+                    color: AppColors.cardBgColor(context),
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(color: AppColors.borderColor(context)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         AppConstants.labelVisitorType,
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: AppColors.textPrimaryColor(context),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -274,19 +283,19 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                 Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Text(
+                                    Text(
                                       AppConstants.labelTotal,
                                       style: TextStyle(
                                         fontSize: 11,
-                                        color: AppColors.textSecondary,
+                                        color: AppColors.textSecondaryColor(context),
                                       ),
                                     ),
                                     Text(
                                       totalVisitors.toString(),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.textPrimary,
+                                        color: AppColors.textPrimaryColor(context),
                                       ),
                                     ),
                                   ],

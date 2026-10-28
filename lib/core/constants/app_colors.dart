@@ -90,4 +90,57 @@ class AppColors {
   static const Color shimmerBase = Color(0xFFE2E8F0);
   static const Color shimmerHighlight = Color(0xFFF8FAFC);
   static const Color shimmerCardBg = Color(0xFFF1F5F9);
+
+  // Dark Theme Palette
+  static const Color darkBackground = Color(0xFF0F172A);
+  static const Color darkSurface = Color(0xFF1E293B);
+  static const Color darkCard = Color(0xFF1E293B);
+  static const Color darkCardBorder = Color(0xFF334155);
+  static const Color darkBorder = Color(0xFF334155);
+  static const Color darkDivider = Color(0xFF334155);
+  static const Color darkInputFill = Color(0xFF1E293B);
+  static const Color darkTextPrimary = Color(0xFFF8FAFC);
+  static const Color darkTextSecondary = Color(0xFF94A3B8);
+  static const Color darkTextMuted = Color(0xFF64748B);
+
+  // Dark Metric Cards
+  static const Color metricBlueBgDark = Color(0xFF1E293B);
+  static const Color metricBlueBorderDark = Color(0xFF2563EB);
+  static const Color metricBlueTextDark = Color(0xFF60A5FA);
+
+  static const Color metricGreenBgDark = Color(0xFF143026);
+  static const Color metricGreenBorderDark = Color(0xFF16A34A);
+  static const Color metricGreenTextDark = Color(0xFF4ADE80);
+
+  static const Color metricPurpleBgDark = Color(0xFF291B3E);
+  static const Color metricPurpleBorderDark = Color(0xFF9333EA);
+  static const Color metricPurpleTextDark = Color(0xFFC084FC);
+
+  // Dynamic Theme Helpers
+  static bool isDark(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark;
+
+  static Color surfaceColor(BuildContext context) =>
+      isDark(context) ? darkSurface : surface;
+
+  static Color backgroundColor(BuildContext context) =>
+      isDark(context) ? darkBackground : background;
+
+  static Color textPrimaryColor(BuildContext context) =>
+      isDark(context) ? darkTextPrimary : textPrimary;
+
+  static Color textSecondaryColor(BuildContext context) =>
+      isDark(context) ? darkTextSecondary : textSecondary;
+
+  static Color textMutedColor(BuildContext context) =>
+      isDark(context) ? darkTextMuted : textMuted;
+
+  static Color borderColor(BuildContext context) =>
+      isDark(context) ? darkBorder : border;
+
+  static Color cardBgColor(BuildContext context) =>
+      isDark(context) ? darkCard : white;
+
+  static Color inputFillColor(BuildContext context) =>
+      isDark(context) ? darkInputFill : inputFill;
 }

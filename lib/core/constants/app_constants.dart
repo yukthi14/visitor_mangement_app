@@ -178,6 +178,20 @@ class AppConstants {
   static const String prefRememberMe = 'pref_remember_me';
   static const String prefRememberedUsername = 'pref_remembered_username';
   static const String prefSampleDataCleaned = 'pref_sample_data_cleaned_v2';
+  static const String prefThemeMode = 'pref_theme_mode';
+
+  // Theme Modes
+  static const String themeModeSystem = 'system';
+  static const String themeModeLight = 'light';
+  static const String themeModeDark = 'dark';
+  static const String labelTheme = 'Theme';
+  static const String labelDarkMode = 'Dark Mode';
+  static const String labelSystemDefault = 'System Default';
+  static const String labelLightMode = 'Light Mode';
+  static const String descSystemDefault = 'Follows device theme (Dark if system is dark, else White)';
+  static const String descLightMode = 'Always light theme';
+  static const String descDarkMode = 'Always dark theme';
+  static const String titleSelectTheme = 'Select Theme';
 
   // QR Scanner Messages
   static const String titleInvalidQR = 'Invalid QR Code';

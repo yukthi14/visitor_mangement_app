@@ -19,12 +19,14 @@ class VisitorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = AppColors.isDark(context);
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: AppColors.cardBgColor(context),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border, width: 1),
+        border: Border.all(color: AppColors.borderColor(context), width: 1),
       ),
       child: Material(
         color: AppColors.transparent,
@@ -40,8 +42,8 @@ class VisitorCard extends StatelessWidget {
                 Container(
                   width: 44,
                   height: 44,
-                  decoration: const BoxDecoration(
-                    color: AppColors.avatarBg,
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.darkSurface : AppColors.avatarBg,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -60,10 +62,10 @@ class VisitorCard extends StatelessWidget {
                     children: [
                       Text(
                         visitor.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: AppColors.textPrimaryColor(context),
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -71,18 +73,18 @@ class VisitorCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         visitor.mobile,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
-                          color: AppColors.textSecondary,
+                          color: AppColors.textSecondaryColor(context),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         '${visitor.project}  •  ${visitor.visitorType}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.textMuted,
+                          color: AppColors.textMutedColor(context),
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -106,7 +108,7 @@ class VisitorCard extends StatelessWidget {
                         children: [
                           if (onEdit != null)
                             IconButton(
-                              icon: const Icon(Icons.edit_outlined, size: 18, color: AppColors.textSecondary),
+                              icon: Icon(Icons.edit_outlined, size: 18, color: AppColors.textSecondaryColor(context)),
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
                               onPressed: onEdit,

@@ -17,20 +17,21 @@ class StatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     Color bg;
     Color text;
+    final isDark = AppColors.isDark(context);
 
     switch (status) {
       case 'Checked In':
-        bg = AppColors.statusCheckedInBg;
-        text = AppColors.statusCheckedInText;
+        bg = isDark ? AppColors.metricGreenBgDark : AppColors.statusCheckedInBg;
+        text = isDark ? AppColors.metricGreenTextDark : AppColors.statusCheckedInText;
         break;
       case 'Checked Out':
-        bg = AppColors.statusCheckedOutBg;
-        text = AppColors.statusCheckedOutText;
+        bg = isDark ? AppColors.metricPurpleBgDark : AppColors.statusCheckedOutBg;
+        text = isDark ? AppColors.metricPurpleTextDark : AppColors.statusCheckedOutText;
         break;
       case 'Registered':
       default:
-        bg = AppColors.statusRegisteredBg;
-        text = AppColors.statusRegisteredText;
+        bg = isDark ? AppColors.metricBlueBgDark : AppColors.statusRegisteredBg;
+        text = isDark ? AppColors.metricBlueTextDark : AppColors.statusRegisteredText;
         break;
     }
 

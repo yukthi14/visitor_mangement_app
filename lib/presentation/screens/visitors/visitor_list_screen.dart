@@ -179,7 +179,7 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.backgroundColor(context),
       appBar: widget.showAppBar
           ? AppBar(
               title: const Text(AppConstants.titleVisitorList),
@@ -235,30 +235,35 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
               children: [
                 // Search Input Field
                 Container(
-                  color: AppColors.white,
+                  color: AppColors.surfaceColor(context),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: AppColors.inputFillDisabled,
+                      color: AppColors.inputFillColor(context),
                       borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: AppColors.borderColor(context)),
                     ),
                     child: TextField(
                       controller: _searchController,
                       onChanged: _onSearchChanged,
+                      style: TextStyle(
+                        color: AppColors.textPrimaryColor(context),
+                        fontSize: 14,
+                      ),
                       decoration: InputDecoration(
                         hintText: AppConstants.searchHint,
-                        hintStyle: const TextStyle(
-                          color: AppColors.textMuted,
+                        hintStyle: TextStyle(
+                          color: AppColors.textMutedColor(context),
                           fontSize: 14,
                         ),
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.search,
-                          color: AppColors.textSecondary,
+                          color: AppColors.textSecondaryColor(context),
                           size: 20,
                         ),
                         suffixIcon: _searchController.text.isNotEmpty
                             ? IconButton(
-                                icon: const Icon(Icons.clear, size: 18, color: AppColors.textSecondary),
+                                icon: Icon(Icons.clear, size: 18, color: AppColors.textSecondaryColor(context)),
                                 onPressed: () {
                                   _searchController.clear();
                                   _onSearchChanged('');
