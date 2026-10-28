@@ -47,6 +47,10 @@ class AppConstants {
   static const String statTotalToday = 'Total Visitors\nToday';
   static const String statCheckedIn = 'Currently\nChecked In';
   static const String statCheckedOut = 'Checked Out\nToday';
+  static const String statTotalVisitors = 'Total Visitors';
+  static const String statCheckedInDay = 'Checked In';
+  static const String statCheckedOutDay = 'Checked Out';
+  static const String labelToday = 'Today';
   static const String quickActions = 'Quick Actions';
   static const String registerVisitor = 'Register Visitor';
   static const String actionRegisterVisitor = 'Register\nVisitor';

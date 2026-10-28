@@ -7,11 +7,13 @@ enum StatCardType { totalToday, checkedIn, checkedOut }
 class StatCard extends StatelessWidget {
   final StatCardType type;
   final int count;
+  final String? customTitle;
 
   const StatCard({
     super.key,
     required this.type,
     required this.count,
+    this.customTitle,
   });
 
   @override
@@ -24,14 +26,14 @@ class StatCard extends StatelessWidget {
 
     switch (type) {
       case StatCardType.totalToday:
-        title = AppConstants.statTotalToday;
+        title = customTitle ?? AppConstants.statTotalToday;
         bgColor = AppColors.metricBlueBg;
         borderColor = AppColors.metricBlueBorder;
         countColor = AppColors.metricBlueText;
         iconWidget = const Icon(Icons.person, size: 20, color: AppColors.primary);
         break;
       case StatCardType.checkedIn:
-        title = AppConstants.statCheckedIn;
+        title = customTitle ?? AppConstants.statCheckedIn;
         bgColor = AppColors.metricGreenBg;
         borderColor = AppColors.metricGreenBorder;
         countColor = AppColors.metricGreenText;
@@ -46,7 +48,7 @@ class StatCard extends StatelessWidget {
         );
         break;
       case StatCardType.checkedOut:
-        title = AppConstants.statCheckedOut;
+        title = customTitle ?? AppConstants.statCheckedOut;
         bgColor = AppColors.metricPurpleBg;
         borderColor = AppColors.metricPurpleBorder;
         countColor = AppColors.metricPurpleText;

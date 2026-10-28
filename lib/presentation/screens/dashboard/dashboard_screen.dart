@@ -15,10 +15,45 @@ import '../auth/login_screen.dart';
 import '../scanner/qr_scanner_screen.dart';
 import '../visitors/register_visitor_screen.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   final Function(int)? onNavigateToTab;
 
   const DashboardScreen({super.key, this.onNavigateToTab});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  DateTime _selectedDate = DateTime.now();
+
+  Future<void> _pickDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2035),
+      initialEntryMode: DatePickerEntryMode.calendarOnly,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: AppColors.primary,
+              onPrimary: AppColors.white,
+              onSurface: AppColors.textPrimary,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
+  }
 
   Widget _buildQuickActionItem({
     required String title,
@@ -77,7 +112,6 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final todayFormatted = DateFormatter.formatHeaderDate(DateTime.now());
     final authState = context.watch<AuthBloc>().state;
     final userName = authState is Authenticated ? authState.username : AppConstants.defaultUser;
 
@@ -127,7 +161,7 @@ class DashboardScreen extends StatelessWidget {
               title: const Text(AppConstants.titleDashboard),
               onTap: () {
                 Navigator.of(context).pop();
-                onNavigateToTab?.call(0);
+                widget.onNavigateToTab?.call(0);
               },
             ),
             ListTile(
@@ -135,7 +169,7 @@ class DashboardScreen extends StatelessWidget {
               title: const Text(AppConstants.titleVisitorList),
               onTap: () {
                 Navigator.of(context).pop();
-                onNavigateToTab?.call(1);
+                widget.onNavigateToTab?.call(1);
               },
             ),
             ListTile(
@@ -143,7 +177,7 @@ class DashboardScreen extends StatelessWidget {
               title: const Text(AppConstants.titleScanQR),
               onTap: () {
                 Navigator.of(context).pop();
-                onNavigateToTab?.call(2);
+                widget.onNavigateToTab?.call(2);
               },
             ),
             ListTile(
@@ -151,7 +185,7 @@ class DashboardScreen extends StatelessWidget {
               title: const Text(AppConstants.titleStatistics),
               onTap: () {
                 Navigator.of(context).pop();
-                onNavigateToTab?.call(3);
+                widget.onNavigateToTab?.call(3);
               },
             ),
             const Divider(),
@@ -182,14 +216,32 @@ class DashboardScreen extends StatelessWidget {
             return const DashboardShimmer();
           }
 
-          int totalToday = 0;
+          final now = DateTime.now();
+          final isToday = _selectedDate.year == now.year &&
+              _selectedDate.month == now.month &&
+              _selectedDate.day == now.day;
+
+          int totalCount = 0;
           int checkedIn = 0;
           int checkedOut = 0;
 
           if (state is VisitorLoaded) {
-            totalToday = state.totalVisitorsToday;
-            checkedIn = state.currentlyCheckedIn;
-            checkedOut = state.checkedOutToday;
+            if (isToday) {
+              totalCount = state.totalVisitorsToday;
+              checkedIn = state.currentlyCheckedIn;
+              checkedOut = state.checkedOutToday;
+            } else {
+              final visitorsOnDate = state.allVisitors.where(
+                (v) => DateFormatter.isSameDate(v.createdAt, _selectedDate),
+              ).toList();
+              totalCount = visitorsOnDate.length;
+              checkedIn = visitorsOnDate
+                  .where((v) => v.status == AppConstants.statusCheckedIn)
+                  .length;
+              checkedOut = visitorsOnDate
+                  .where((v) => v.status == AppConstants.statusCheckedOut)
+                  .length;
+            }
           }
 
           return RefreshIndicator(
@@ -202,33 +254,74 @@ class DashboardScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Date Card
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: AppColors.border),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.calendar_today_outlined,
-                          size: 16,
-                          color: AppColors.textSecondary,
+                  // Interactive Date Card
+                  Row(
+                    children: [
+                      Material(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        child: InkWell(
+                          onTap: _pickDate,
+                          borderRadius: BorderRadius.circular(10),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: AppColors.border),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.calendar_today_outlined,
+                                  size: 16,
+                                  color: AppColors.primary,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  DateFormatter.formatHeaderDate(_selectedDate),
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                const Icon(
+                                  Icons.arrow_drop_down,
+                                  size: 18,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
+                      ),
+                      if (!isToday) ...[
                         const SizedBox(width: 8),
-                        Text(
-                          todayFormatted,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
+                        TextButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              _selectedDate = DateTime.now();
+                            });
+                          },
+                          icon: const Icon(Icons.today, size: 14, color: AppColors.primary),
+                          label: const Text(
+                            AppConstants.labelToday,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
                         ),
                       ],
-                    ),
+                    ],
                   ),
                   const SizedBox(height: 16),
 
@@ -237,17 +330,20 @@ class DashboardScreen extends StatelessWidget {
                     children: [
                       StatCard(
                         type: StatCardType.totalToday,
-                        count: totalToday,
+                        count: totalCount,
+                        customTitle: isToday ? null : AppConstants.statTotalVisitors,
                       ),
                       const SizedBox(width: 10),
                       StatCard(
                         type: StatCardType.checkedIn,
                         count: checkedIn,
+                        customTitle: isToday ? null : AppConstants.statCheckedInDay,
                       ),
                       const SizedBox(width: 10),
                       StatCard(
                         type: StatCardType.checkedOut,
                         count: checkedOut,
+                        customTitle: isToday ? null : AppConstants.statCheckedOutDay,
                       ),
                     ],
                   ),
@@ -290,9 +386,7 @@ class DashboardScreen extends StatelessWidget {
                         iconBgColor: AppColors.statusCheckedInText,
                         iconColor: AppColors.white,
                         onTap: () {
-                          if (onNavigateToTab != null) {
-                            onNavigateToTab!(1);
-                          }
+                          widget.onNavigateToTab?.call(1);
                         },
                       ),
                       const SizedBox(width: 12),
