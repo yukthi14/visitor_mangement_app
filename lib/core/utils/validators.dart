@@ -3,21 +3,24 @@ import '../constants/app_constants.dart';
 class Validators {
   static String? validateName(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Visitor name is required';
+      return AppConstants.errorNameRequired;
     }
     if (value.trim().length < 2) {
-      return 'Name must be at least 2 characters';
+      return AppConstants.errorNameMinLength;
     }
     return null;
   }
 
   static String? validateMobile(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Mobile number is required';
+      return AppConstants.errorMobileRequired;
     }
     final trimmed = value.trim();
-    if (!RegExp(r'^\d{10}$').hasMatch(trimmed)) {
-      return 'Mobile number must be exactly 10 digits';
+    if (!RegExp(r'^\d+$').hasMatch(trimmed)) {
+      return AppConstants.errorMobileDigitsOnly;
+    }
+    if (trimmed.length != 10) {
+      return AppConstants.errorMobileTenDigits;
     }
     return null;
   }
@@ -27,9 +30,9 @@ class Validators {
       return null; // Optional
     }
     final trimmed = value.trim();
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    final emailRegex = RegExp(r'^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$');
     if (!emailRegex.hasMatch(trimmed)) {
-      return 'Please enter a valid email address';
+      return AppConstants.errorInvalidEmail;
     }
     return null;
   }

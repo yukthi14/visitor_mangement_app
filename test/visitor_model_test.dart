@@ -102,19 +102,26 @@ void main() {
       expect(Validators.validateName('Aarav'), isNull);
     });
 
-    test('validateMobile requires exactly 10 digits', () {
+    test('validateMobile requires exactly 10 digits and only digits', () {
       expect(Validators.validateMobile(''), isNotNull);
+      expect(Validators.validateMobile(null), isNotNull);
       expect(Validators.validateMobile('12345'), isNotNull);
       expect(Validators.validateMobile('abcdefghij'), isNotNull);
+      expect(Validators.validateMobile('987654321a'), isNotNull);
       expect(Validators.validateMobile('98765432101'), isNotNull);
       expect(Validators.validateMobile('9876543210'), isNull);
     });
 
-    test('validateEmail allows empty optional or validates format', () {
+    test('validateEmail allows empty optional or validates valid/invalid format', () {
       expect(Validators.validateEmail(''), isNull);
       expect(Validators.validateEmail(null), isNull);
       expect(Validators.validateEmail('invalid-email'), isNotNull);
+      expect(Validators.validateEmail('user@'), isNotNull);
+      expect(Validators.validateEmail('@domain.com'), isNotNull);
+      expect(Validators.validateEmail('user@domain'), isNotNull);
       expect(Validators.validateEmail('user@test.com'), isNull);
+      expect(Validators.validateEmail('john.doe@company.org'), isNull);
+      expect(Validators.validateEmail('user+tag@domain.co.uk'), isNull);
     });
 
     test('validateUsername validates non-empty', () {

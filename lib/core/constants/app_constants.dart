@@ -133,6 +133,12 @@ class AppConstants {
 
   // Form Validation & Errors
   static const String errorSelectTypeAndProject = 'Please select visitor type and project';
+  static const String errorNameRequired = 'Visitor name is required';
+  static const String errorNameMinLength = 'Name must be at least 2 characters';
+  static const String errorMobileRequired = 'Mobile number is required';
+  static const String errorMobileDigitsOnly = 'Mobile number must contain only digits';
+  static const String errorMobileTenDigits = 'Mobile number must be exactly 10 digits';
+  static const String errorInvalidEmail = 'Please enter a valid email address';
 
   // Success Screens
   static const String titleRegSuccess = 'Registration Successful';

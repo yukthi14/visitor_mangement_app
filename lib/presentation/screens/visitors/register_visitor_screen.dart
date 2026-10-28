@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
@@ -96,19 +97,19 @@ class _RegisterVisitorScreenState extends State<RegisterVisitorScreen> {
     final buttonText = isEditMode ? AppConstants.btnUpdate : AppConstants.btnSave;
 
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.surfaceColor(context),
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.surfaceColor(context),
         elevation: 0,
         centerTitle: false,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: Icon(Icons.arrow_back, color: AppColors.textPrimaryColor(context)),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           title,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
+          style: TextStyle(
+            color: AppColors.textPrimaryColor(context),
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -171,23 +172,29 @@ class _RegisterVisitorScreenState extends State<RegisterVisitorScreen> {
                           ),
                           const SizedBox(height: 18),
 
-                          // Mobile Number
+                          // Mobile Number - Accepts ONLY digits, max 10 digits
                           CustomTextField(
                             label: AppConstants.labelMobileNumber,
                             hintText: AppConstants.hintMobileNumber,
                             controller: _mobileController,
                             keyboardType: TextInputType.phone,
                             isRequired: true,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(10),
+                            ],
                             validator: Validators.validateMobile,
                           ),
                           const SizedBox(height: 18),
 
-                          // Email
+                          // Email ID - Validates email format and accepts valid emails
                           CustomTextField(
                             label: AppConstants.labelEmailOptional,
                             hintText: AppConstants.hintEmail,
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
+                            autocorrect: false,
+                            enableSuggestions: false,
                             validator: Validators.validateEmail,
                           ),
                           const SizedBox(height: 18),
