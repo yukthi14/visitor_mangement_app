@@ -17,7 +17,7 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
 
   const ScannedVisitorInfoScreen({super.key, required this.visitor});
 
-  Widget _buildInfoRow(String label, String value) {
+  Widget _buildInfoRow(BuildContext context, String label, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -25,9 +25,9 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
           width: 130,
           child: Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
-              color: AppColors.textSecondary,
+              color: AppColors.textSecondaryColor(context),
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -35,10 +35,10 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: AppColors.textPrimaryColor(context),
             ),
           ),
         ),
@@ -48,6 +48,8 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = AppColors.isDark(context);
+
     return BlocConsumer<VisitorBloc, VisitorState>(
       listener: (context, state) {
         if (state is VisitorLoaded) {
@@ -83,18 +85,18 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
         final isSubmitting = state is VisitorLoaded && state.isSubmitting;
 
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: AppColors.backgroundColor(context),
           appBar: AppBar(
-            backgroundColor: AppColors.white,
+            backgroundColor: AppColors.surfaceColor(context),
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+              icon: Icon(Icons.arrow_back, color: AppColors.textPrimaryColor(context)),
               onPressed: () => Navigator.of(context).pop(),
             ),
-            title: const Text(
+            title: Text(
               AppConstants.titleVisitorInfo,
               style: TextStyle(
-                color: AppColors.textPrimary,
+                color: AppColors.textPrimaryColor(context),
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -110,16 +112,18 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryLight,
+                      color: isDark ? AppColors.metricBlueBgDark : AppColors.primaryLight,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.metricBlueBorder),
+                      border: Border.all(
+                        color: isDark ? AppColors.metricBlueBorderDark : AppColors.metricBlueBorder,
+                      ),
                     ),
                     child: Row(
                       children: [
                         Container(
                           padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(
-                            color: AppColors.white,
+                          decoration: BoxDecoration(
+                            color: isDark ? AppColors.darkCard : AppColors.white,
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -129,21 +133,21 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        const Text(
+                        Text(
                           AppConstants.labelExtractedVisitorId,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
+                            color: isDark ? AppColors.metricBlueTextDark : AppColors.textPrimary,
                           ),
                         ),
                         const SizedBox(width: 8),
                         Text(
                           currentVisitor.id,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
+                            color: isDark ? AppColors.metricBlueTextDark : AppColors.primary,
                           ),
                         ),
                       ],
@@ -155,23 +159,23 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
-                      color: AppColors.white,
+                      color: AppColors.cardBgColor(context),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.border),
+                      border: Border.all(color: AppColors.borderColor(context)),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
-                          children: const [
-                            Icon(Icons.info_outline_rounded, color: AppColors.textSecondary, size: 20),
-                            SizedBox(width: 10),
+                          children: [
+                            Icon(Icons.info_outline_rounded, color: AppColors.textSecondaryColor(context), size: 20),
+                            const SizedBox(width: 10),
                             Text(
                               AppConstants.labelStatusWithColon,
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.textSecondary,
+                                color: AppColors.textSecondaryColor(context),
                               ),
                             ),
                           ],
@@ -190,48 +194,51 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppColors.white,
+                      color: AppColors.cardBgColor(context),
                       borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: AppColors.border),
+                      border: Border.all(color: AppColors.borderColor(context)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           AppConstants.sectionOtherVisitorInfo,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: AppColors.textPrimaryColor(context),
                           ),
                         ),
                         const SizedBox(height: 16),
-                        _buildInfoRow(AppConstants.labelVisitorName, currentVisitor.name),
-                        const Divider(height: 16, color: AppColors.divider),
-                        _buildInfoRow(AppConstants.labelMobileNumber, currentVisitor.mobile),
-                        const Divider(height: 16, color: AppColors.divider),
-                        _buildInfoRow(AppConstants.labelEmail, currentVisitor.email ?? '--'),
-                        const Divider(height: 16, color: AppColors.divider),
-                        _buildInfoRow(AppConstants.labelVisitorType, currentVisitor.visitorType),
-                        const Divider(height: 16, color: AppColors.divider),
-                        _buildInfoRow(AppConstants.labelProject, currentVisitor.project),
-                        const Divider(height: 16, color: AppColors.divider),
-                        _buildInfoRow(AppConstants.labelPurpose, currentVisitor.purpose),
-                        const Divider(height: 16, color: AppColors.divider),
+                        _buildInfoRow(context, AppConstants.labelVisitorName, currentVisitor.name),
+                        Divider(height: 16, color: AppColors.dividerColor(context)),
+                        _buildInfoRow(context, AppConstants.labelMobileNumber, currentVisitor.mobile),
+                        Divider(height: 16, color: AppColors.dividerColor(context)),
+                        _buildInfoRow(context, AppConstants.labelEmail, currentVisitor.email ?? '--'),
+                        Divider(height: 16, color: AppColors.dividerColor(context)),
+                        _buildInfoRow(context, AppConstants.labelVisitorType, currentVisitor.visitorType),
+                        Divider(height: 16, color: AppColors.dividerColor(context)),
+                        _buildInfoRow(context, AppConstants.labelProject, currentVisitor.project),
+                        Divider(height: 16, color: AppColors.dividerColor(context)),
+                        _buildInfoRow(context, AppConstants.labelPurpose, currentVisitor.purpose),
+                        Divider(height: 16, color: AppColors.dividerColor(context)),
                         _buildInfoRow(
+                          context,
                           AppConstants.labelRegisteredOn,
                           DateFormatter.formatDateTime(currentVisitor.createdAt),
                         ),
                         if (currentVisitor.checkInTime != null) ...[
-                          const Divider(height: 16, color: AppColors.divider),
+                          Divider(height: 16, color: AppColors.dividerColor(context)),
                           _buildInfoRow(
+                            context,
                             AppConstants.labelCheckInTime,
                             DateFormatter.formatDateTime(currentVisitor.checkInTime),
                           ),
                         ],
                         if (currentVisitor.checkOutTime != null) ...[
-                          const Divider(height: 16, color: AppColors.divider),
+                          Divider(height: 16, color: AppColors.dividerColor(context)),
                           _buildInfoRow(
+                            context,
                             AppConstants.labelCheckOutTime,
                             DateFormatter.formatDateTime(currentVisitor.checkOutTime),
                           ),
@@ -262,7 +269,7 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
                     text: AppConstants.actionCheckOut,
                     icon: Icons.logout_rounded,
                     isOutlined: true,
-                    backgroundColor: AppColors.white,
+                    backgroundColor: AppColors.cardBgColor(context),
                     textColor: AppColors.statusCheckedOutText,
                     borderColor: AppColors.purpleLight,
                     isLoading: isSubmitting && state.operationType == 'check_out',
@@ -280,8 +287,9 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
                   CustomButton(
                     text: AppConstants.viewDetails,
                     isOutlined: true,
-                    borderColor: AppColors.border,
-                    textColor: AppColors.textPrimary,
+                    backgroundColor: AppColors.cardBgColor(context),
+                    borderColor: AppColors.borderColor(context),
+                    textColor: AppColors.textPrimaryColor(context),
                     onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(

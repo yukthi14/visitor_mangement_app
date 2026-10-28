@@ -5,6 +5,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../core/widgets/shimmer_loading.dart';
 import '../../../core/widgets/stat_card.dart';
+import '../../../core/widgets/theme_toggle_button.dart';
 import '../../../logic/blocs/auth/auth_bloc.dart';
 import '../../../logic/blocs/auth/auth_event.dart';
 import '../../../logic/blocs/auth/auth_state.dart';
@@ -29,125 +30,6 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   DateTime _selectedDate = DateTime.now();
-
-  Widget _buildThemeOption({
-    required BuildContext context,
-    required String title,
-    required String subtitle,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        child: Row(
-          children: [
-            Icon(
-              isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-              color: isSelected ? AppColors.primary : AppColors.textSecondaryColor(context),
-              size: 20,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: AppColors.textPrimaryColor(context),
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textSecondaryColor(context),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showThemeSelectionDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return BlocBuilder<ThemeBloc, ThemeState>(
-          builder: (context, themeState) {
-            return AlertDialog(
-              backgroundColor: AppColors.surfaceColor(context),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              title: Text(
-                AppConstants.titleSelectTheme,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: AppColors.textPrimaryColor(context),
-                ),
-              ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildThemeOption(
-                    context: context,
-                    title: AppConstants.labelSystemDefault,
-                    subtitle: AppConstants.descSystemDefault,
-                    isSelected: themeState.themeMode == ThemeMode.system,
-                    onTap: () {
-                      context.read<ThemeBloc>().add(const ChangeThemeMode(ThemeMode.system));
-                      Navigator.of(ctx).pop();
-                    },
-                  ),
-                  const SizedBox(height: 4),
-                  _buildThemeOption(
-                    context: context,
-                    title: AppConstants.labelLightMode,
-                    subtitle: AppConstants.descLightMode,
-                    isSelected: themeState.themeMode == ThemeMode.light,
-                    onTap: () {
-                      context.read<ThemeBloc>().add(const ChangeThemeMode(ThemeMode.light));
-                      Navigator.of(ctx).pop();
-                    },
-                  ),
-                  const SizedBox(height: 4),
-                  _buildThemeOption(
-                    context: context,
-                    title: AppConstants.labelDarkMode,
-                    subtitle: AppConstants.descDarkMode,
-                    isSelected: themeState.themeMode == ThemeMode.dark,
-                    onTap: () {
-                      context.read<ThemeBloc>().add(const ChangeThemeMode(ThemeMode.dark));
-                      Navigator.of(ctx).pop();
-                    },
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(ctx).pop(),
-                  child: const Text(
-                    AppConstants.cancel,
-                    style: TextStyle(color: AppColors.primary),
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
 
   Future<void> _pickDate() async {
     final isDark = AppColors.isDark(context);
@@ -260,19 +142,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             },
           ),
         ),
-        actions: [
-          BlocBuilder<ThemeBloc, ThemeState>(
-            builder: (context, themeState) {
-              final isCurrentDark = themeState.isDarkMode(context);
-              return IconButton(
-                icon: Icon(
-                  isCurrentDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
-                ),
-                tooltip: AppConstants.labelTheme,
-                onPressed: () => _showThemeSelectionDialog(context),
-              );
-            },
-          ),
+        actions: const [
+          ThemeToggleButton(),
         ],
       ),
       drawer: Drawer(
@@ -333,44 +204,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
               onTap: () {
                 Navigator.of(context).pop();
                 widget.onNavigateToTab?.call(3);
-              },
-            ),
-            const Divider(),
-            // Dark Mode Feature in Drawer Menu
-            BlocBuilder<ThemeBloc, ThemeState>(
-              builder: (context, themeState) {
-                final isCurrentDark = themeState.isDarkMode(context);
-
-                return ListTile(
-                  leading: Icon(
-                    isCurrentDark ? Icons.dark_mode : Icons.dark_mode_outlined,
-                    color: AppColors.primary,
-                  ),
-                  title: const Text(AppConstants.labelDarkMode),
-                  subtitle: Text(
-                    themeState.themeMode == ThemeMode.system
-                        ? AppConstants.labelSystemDefault
-                        : (themeState.themeMode == ThemeMode.dark
-                            ? AppConstants.labelDarkMode
-                            : AppConstants.labelLightMode),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textSecondaryColor(context),
-                    ),
-                  ),
-                  trailing: Switch(
-                    value: isCurrentDark,
-                    activeThumbColor: AppColors.primary,
-                    onChanged: (bool value) {
-                      context.read<ThemeBloc>().add(
-                            ChangeThemeMode(value ? ThemeMode.dark : ThemeMode.light),
-                          );
-                    },
-                  ),
-                  onTap: () {
-                    _showThemeSelectionDialog(context);
-                  },
-                );
               },
             ),
             const Divider(),

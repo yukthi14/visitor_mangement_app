@@ -18,7 +18,7 @@ class VisitorDetailsScreen extends StatelessWidget {
 
   const VisitorDetailsScreen({super.key, required this.visitor});
 
-  Widget _buildDetailRow(String label, String value) {
+  Widget _buildDetailRow(BuildContext context, String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -28,9 +28,9 @@ class VisitorDetailsScreen extends StatelessWidget {
             width: 130,
             child: Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: AppColors.textSecondary,
+                color: AppColors.textSecondaryColor(context),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -38,10 +38,10 @@ class VisitorDetailsScreen extends StatelessWidget {
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+                color: AppColors.textPrimaryColor(context),
               ),
             ),
           ),
@@ -87,19 +87,19 @@ class VisitorDetailsScreen extends StatelessWidget {
         final isSubmitting = state is VisitorLoaded && state.isSubmitting;
 
         return Scaffold(
-          backgroundColor: AppColors.white,
+          backgroundColor: AppColors.backgroundColor(context),
           appBar: AppBar(
-            backgroundColor: AppColors.white,
+            backgroundColor: AppColors.surfaceColor(context),
             elevation: 0,
             centerTitle: false,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+              icon: Icon(Icons.arrow_back, color: AppColors.textPrimaryColor(context)),
               onPressed: () => Navigator.of(context).pop(),
             ),
-            title: const Text(
+            title: Text(
               AppConstants.titleVisitorDetails,
               style: TextStyle(
-                color: AppColors.textPrimary,
+                color: AppColors.textPrimaryColor(context),
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -118,17 +118,17 @@ class VisitorDetailsScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: AppColors.inputFill,
+                            color: AppColors.cardBgColor(context),
                             borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: AppColors.border),
+                            border: Border.all(color: AppColors.borderColor(context)),
                           ),
                           child: Row(
                             children: [
                               Container(
                                 width: 56,
                                 height: 56,
-                                decoration: const BoxDecoration(
-                                  color: AppColors.avatarBg,
+                                decoration: BoxDecoration(
+                                  color: AppColors.avatarBgColor(context),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -144,27 +144,27 @@ class VisitorDetailsScreen extends StatelessWidget {
                                   children: [
                                     Text(
                                       currentVisitor.name,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 17,
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.textPrimary,
+                                        color: AppColors.textPrimaryColor(context),
                                       ),
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
                                       currentVisitor.mobile,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 13,
-                                        color: AppColors.textSecondary,
+                                        color: AppColors.textSecondaryColor(context),
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
                                       '${currentVisitor.project}  •  ${currentVisitor.visitorType}',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 12,
-                                        color: AppColors.textMuted,
+                                        color: AppColors.textMutedColor(context),
                                       ),
                                     ),
                                   ],
@@ -180,32 +180,35 @@ class VisitorDetailsScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: AppColors.white,
+                            color: AppColors.cardBgColor(context),
                             borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: AppColors.border),
+                            border: Border.all(color: AppColors.borderColor(context)),
                           ),
                           child: Column(
                             children: [
-                              _buildDetailRow(AppConstants.labelVisitorId, currentVisitor.id),
-                              const Divider(height: 14, color: AppColors.divider),
-                              _buildDetailRow(AppConstants.labelEmail, currentVisitor.email ?? '--'),
-                              const Divider(height: 14, color: AppColors.divider),
-                              _buildDetailRow(AppConstants.labelPurpose, currentVisitor.purpose),
-                              const Divider(height: 14, color: AppColors.divider),
+                              _buildDetailRow(context, AppConstants.labelVisitorId, currentVisitor.id),
+                              Divider(height: 14, color: AppColors.dividerColor(context)),
+                              _buildDetailRow(context, AppConstants.labelEmail, currentVisitor.email ?? '--'),
+                              Divider(height: 14, color: AppColors.dividerColor(context)),
+                              _buildDetailRow(context, AppConstants.labelPurpose, currentVisitor.purpose),
+                              Divider(height: 14, color: AppColors.dividerColor(context)),
                               _buildDetailRow(
+                                context,
                                 AppConstants.labelRegisteredOn,
                                 DateFormatter.formatDateTime(currentVisitor.createdAt),
                               ),
                               if (currentVisitor.checkInTime != null) ...[
-                                const Divider(height: 14, color: AppColors.divider),
+                                Divider(height: 14, color: AppColors.dividerColor(context)),
                                 _buildDetailRow(
+                                  context,
                                   AppConstants.labelCheckInTime,
                                   DateFormatter.formatDateTime(currentVisitor.checkInTime),
                                 ),
                               ],
                               if (currentVisitor.checkOutTime != null) ...[
-                                const Divider(height: 14, color: AppColors.divider),
+                                Divider(height: 14, color: AppColors.dividerColor(context)),
                                 _buildDetailRow(
+                                  context,
                                   AppConstants.labelCheckOutTime,
                                   DateFormatter.formatDateTime(currentVisitor.checkOutTime),
                                 ),
@@ -229,19 +232,27 @@ class VisitorDetailsScreen extends StatelessWidget {
                             child: Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: AppColors.white,
+                                color: AppColors.cardBgColor(context),
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: AppColors.border),
+                                border: Border.all(color: AppColors.borderColor(context)),
                               ),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  QrImageView(
-                                    data: currentVisitor.toQrData(),
-                                    version: QrVersions.auto,
-                                    size: 150.0,
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: QrImageView(
+                                      data: currentVisitor.toQrData(),
+                                      version: QrVersions.auto,
+                                      size: 150.0,
+                                      backgroundColor: AppColors.white,
+                                    ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 10),
                                   Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: const [
@@ -311,13 +322,13 @@ class VisitorDetailsScreen extends StatelessWidget {
                             height: 48,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: AppColors.inputFillDisabled,
+                              color: AppColors.disabledFillColor(context),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: const Text(
+                            child: Text(
                               AppConstants.statusCompleted,
                               style: TextStyle(
-                                color: AppColors.textSecondary,
+                                color: AppColors.textSecondaryColor(context),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),

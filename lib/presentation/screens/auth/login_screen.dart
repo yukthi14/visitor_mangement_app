@@ -63,8 +63,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = AppColors.isDark(context);
+
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.backgroundColor(context),
       body: SafeArea(
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
@@ -100,8 +102,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Container(
                       width: 90,
                       height: 90,
-                      decoration: const BoxDecoration(
-                        color: AppColors.primaryLight,
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.metricBlueBgDark : AppColors.primaryLight,
                         shape: BoxShape.circle,
                       ),
                       child: Stack(
@@ -137,13 +139,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 24),
 
                   // Title & Subtitle
-                  const Center(
+                  Center(
                     child: Text(
                       AppConstants.appName,
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        color: AppColors.textPrimaryColor(context),
                       ),
                     ),
                   ),
@@ -152,6 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Username Field
                   TextField(
                     controller: _usernameController,
+                    style: TextStyle(color: AppColors.textPrimaryColor(context)),
                     onChanged: (val) {
                       if (_usernameError != null) {
                         setState(() {
@@ -161,25 +164,25 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: AppColors.inputFill,
+                      fillColor: AppColors.inputFillColor(context),
                       hintText: AppConstants.labelUsername,
-                      hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 14),
+                      hintStyle: TextStyle(color: AppColors.textMutedColor(context), fontSize: 14),
                       prefixIcon: Icon(
                         Icons.person_outline,
-                        color: _usernameError != null ? AppColors.danger : AppColors.textSecondary,
+                        color: _usernameError != null ? AppColors.danger : AppColors.textSecondaryColor(context),
                         size: 20,
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide(
-                          color: _usernameError != null ? AppColors.danger : AppColors.border,
+                          color: _usernameError != null ? AppColors.danger : AppColors.borderColor(context),
                           width: _usernameError != null ? 1.5 : 1.0,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide(
-                          color: _usernameError != null ? AppColors.danger : AppColors.border,
+                          color: _usernameError != null ? AppColors.danger : AppColors.borderColor(context),
                           width: _usernameError != null ? 1.5 : 1.0,
                         ),
                       ),
@@ -221,6 +224,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
+                    style: TextStyle(color: AppColors.textPrimaryColor(context)),
                     onChanged: (_) {
                       if (_passwordError != null) {
                         setState(() {
@@ -230,18 +234,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: AppColors.inputFill,
+                      fillColor: AppColors.inputFillColor(context),
                       hintText: AppConstants.labelPassword,
-                      hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 14),
+                      hintStyle: TextStyle(color: AppColors.textMutedColor(context), fontSize: 14),
                       prefixIcon: Icon(
                         Icons.lock_outline,
-                        color: _passwordError != null ? AppColors.danger : AppColors.textSecondary,
+                        color: _passwordError != null ? AppColors.danger : AppColors.textSecondaryColor(context),
                         size: 20,
                       ),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                          color: AppColors.textSecondary,
+                          color: AppColors.textSecondaryColor(context),
                           size: 20,
                         ),
                         onPressed: () {
@@ -253,14 +257,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide(
-                          color: _passwordError != null ? AppColors.danger : AppColors.border,
+                          color: _passwordError != null ? AppColors.danger : AppColors.borderColor(context),
                           width: _passwordError != null ? 1.5 : 1.0,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide(
-                          color: _passwordError != null ? AppColors.danger : AppColors.border,
+                          color: _passwordError != null ? AppColors.danger : AppColors.borderColor(context),
                           width: _passwordError != null ? 1.5 : 1.0,
                         ),
                       ),

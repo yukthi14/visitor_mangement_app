@@ -5,6 +5,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/widgets/confirm_delete_dialog.dart';
 import '../../../core/widgets/empty_state_view.dart';
 import '../../../core/widgets/loading_view.dart';
+import '../../../core/widgets/theme_toggle_button.dart';
 import '../../../core/widgets/visitor_card.dart';
 import '../../../data/models/visitor_model.dart';
 import '../../../logic/blocs/visitor/visitor_bloc.dart';
@@ -38,8 +39,11 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
   }
 
   void _showFilterModal() {
+    final isDark = AppColors.isDark(context);
+
     showModalBottomSheet(
       context: context,
+      backgroundColor: AppColors.surfaceColor(context),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -55,12 +59,12 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         AppConstants.filterVisitorsTitle,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: AppColors.textPrimaryColor(context),
                         ),
                       ),
                       TextButton(
@@ -78,14 +82,24 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
                               );
                           Navigator.of(ctx).pop();
                         },
-                        child: const Text(AppConstants.reset),
+                        child: const Text(
+                          AppConstants.reset,
+                          style: TextStyle(color: AppColors.primary),
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
 
                   // Project filter
-                  const Text(AppConstants.labelProject, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                  Text(
+                    AppConstants.labelProject,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: AppColors.textPrimaryColor(context),
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -94,10 +108,16 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
                       return ChoiceChip(
                         label: Text(project),
                         selected: isSelected,
-                        selectedColor: AppColors.primaryLight,
+                        backgroundColor: isDark ? AppColors.darkCard : AppColors.inputFillDisabled,
+                        selectedColor: isDark ? AppColors.primary : AppColors.primaryLight,
+                        side: BorderSide(
+                          color: isSelected ? AppColors.primary : AppColors.borderColor(context),
+                        ),
                         labelStyle: TextStyle(
-                          color: isSelected ? AppColors.primary : AppColors.textPrimary,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          color: isSelected
+                              ? (isDark ? AppColors.white : AppColors.primary)
+                              : AppColors.textPrimaryColor(context),
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                         ),
                         onSelected: (selected) {
                           setModalState(() {
@@ -119,7 +139,14 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
                   const SizedBox(height: 16),
 
                   // Status filter
-                  const Text(AppConstants.labelStatus, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                  Text(
+                    AppConstants.labelStatus,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: AppColors.textPrimaryColor(context),
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -132,10 +159,16 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
                       return ChoiceChip(
                         label: Text(status),
                         selected: isSelected,
-                        selectedColor: AppColors.primaryLight,
+                        backgroundColor: isDark ? AppColors.darkCard : AppColors.inputFillDisabled,
+                        selectedColor: isDark ? AppColors.primary : AppColors.primaryLight,
+                        side: BorderSide(
+                          color: isSelected ? AppColors.primary : AppColors.borderColor(context),
+                        ),
                         labelStyle: TextStyle(
-                          color: isSelected ? AppColors.primary : AppColors.textPrimary,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          color: isSelected
+                              ? (isDark ? AppColors.white : AppColors.primary)
+                              : AppColors.textPrimaryColor(context),
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                         ),
                         onSelected: (selected) {
                           setModalState(() {
@@ -185,6 +218,7 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
               title: const Text(AppConstants.titleVisitorList),
               centerTitle: true,
               actions: [
+                const ThemeToggleButton(),
                 IconButton(
                   icon: const Icon(Icons.filter_list_rounded),
                   onPressed: _showFilterModal,
@@ -284,14 +318,18 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                    color: AppColors.primaryLight,
+                    color: AppColors.isDark(context) ? AppColors.metricBlueBgDark : AppColors.primaryLight,
                     child: Row(
                       children: [
                         const Icon(Icons.filter_alt, size: 14, color: AppColors.primary),
                         const SizedBox(width: 6),
                         Text(
                           '${AppConstants.filteredBy} ${[_selectedProjectFilter, _selectedStatusFilter].where((e) => e != null).join(', ')}',
-                          style: const TextStyle(fontSize: 12, color: AppColors.primary, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.isDark(context) ? AppColors.metricBlueTextDark : AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                         const Spacer(),
                         InkWell(
@@ -304,7 +342,11 @@ class _VisitorListScreenState extends State<VisitorListScreen> {
                                   const FilterVisitors(project: null, status: null),
                                 );
                           },
-                          child: const Icon(Icons.close, size: 16, color: AppColors.primary),
+                          child: Icon(
+                            Icons.close,
+                            size: 16,
+                            color: AppColors.isDark(context) ? AppColors.metricBlueTextDark : AppColors.primary,
+                          ),
                         ),
                       ],
                     ),

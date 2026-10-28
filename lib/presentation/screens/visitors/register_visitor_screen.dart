@@ -97,7 +97,7 @@ class _RegisterVisitorScreenState extends State<RegisterVisitorScreen> {
     final buttonText = isEditMode ? AppConstants.btnUpdate : AppConstants.btnSave;
 
     return Scaffold(
-      backgroundColor: AppColors.surfaceColor(context),
+      backgroundColor: AppColors.backgroundColor(context),
       appBar: AppBar(
         backgroundColor: AppColors.surfaceColor(context),
         elevation: 0,

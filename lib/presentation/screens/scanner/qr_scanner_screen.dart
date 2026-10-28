@@ -60,7 +60,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.surfaceColor(context),
         title: Row(
           children: [
             Container(
@@ -76,13 +76,13 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
               ),
             ),
             const SizedBox(width: 12),
-            const Expanded(
+            Expanded(
               child: Text(
                 AppConstants.titleInvalidQR,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: AppColors.textPrimaryColor(context),
                 ),
               ),
             ),
@@ -90,9 +90,9 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
         ),
         content: Text(
           message,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
-            color: AppColors.textSecondary,
+            color: AppColors.textSecondaryColor(context),
             height: 1.4,
           ),
         ),

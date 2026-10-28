@@ -143,4 +143,13 @@ class AppColors {
 
   static Color inputFillColor(BuildContext context) =>
       isDark(context) ? darkInputFill : inputFill;
+
+  static Color dividerColor(BuildContext context) =>
+      isDark(context) ? darkDivider : divider;
+
+  static Color avatarBgColor(BuildContext context) =>
+      isDark(context) ? darkSurface : avatarBg;
+
+  static Color disabledFillColor(BuildContext context) =>
+      isDark(context) ? darkCard : inputFillDisabled;
 }

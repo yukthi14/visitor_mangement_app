@@ -15,7 +15,7 @@ class StatusSuccessScreen extends StatelessWidget {
     required this.isCheckIn,
   });
 
-  Widget _buildSummaryRow(String label, String value) {
+  Widget _buildSummaryRow(BuildContext context, String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -23,18 +23,18 @@ class StatusSuccessScreen extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
-              color: AppColors.textSecondary,
+              color: AppColors.textSecondaryColor(context),
               fontWeight: FontWeight.w500,
             ),
           ),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: AppColors.textPrimaryColor(context),
             ),
           ),
         ],
@@ -51,7 +51,7 @@ class StatusSuccessScreen extends StatelessWidget {
         : (visitor.checkOutTime ?? DateFormatter.currentIsoTimestamp());
 
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.backgroundColor(context),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -78,10 +78,10 @@ class StatusSuccessScreen extends StatelessWidget {
               // Title
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: AppColors.textPrimaryColor(context),
                 ),
               ),
               const SizedBox(height: 10),
@@ -91,17 +91,17 @@ class StatusSuccessScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 text: TextSpan(
                   text: 'Visitor ',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: AppColors.textSecondary,
+                    color: AppColors.textSecondaryColor(context),
                     height: 1.4,
                   ),
                   children: [
                     TextSpan(
                       text: visitor.name,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        color: AppColors.textPrimaryColor(context),
                       ),
                     ),
                     TextSpan(
@@ -116,19 +116,20 @@ class StatusSuccessScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 decoration: BoxDecoration(
-                  color: AppColors.inputFill,
+                  color: AppColors.cardBgColor(context),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: AppColors.borderColor(context)),
                 ),
                 child: Column(
                   children: [
-                    _buildSummaryRow(AppConstants.labelVisitorId, visitor.id),
-                    const Divider(height: 1, color: AppColors.divider),
-                    _buildSummaryRow(AppConstants.labelProject, visitor.project),
-                    const Divider(height: 1, color: AppColors.divider),
-                    _buildSummaryRow(AppConstants.labelVisitorType, visitor.visitorType),
-                    const Divider(height: 1, color: AppColors.divider),
+                    _buildSummaryRow(context, AppConstants.labelVisitorId, visitor.id),
+                    Divider(height: 1, color: AppColors.dividerColor(context)),
+                    _buildSummaryRow(context, AppConstants.labelProject, visitor.project),
+                    Divider(height: 1, color: AppColors.dividerColor(context)),
+                    _buildSummaryRow(context, AppConstants.labelVisitorType, visitor.visitorType),
+                    Divider(height: 1, color: AppColors.dividerColor(context)),
                     _buildSummaryRow(
+                      context,
                       isCheckIn ? AppConstants.labelCheckInTime : AppConstants.labelCheckOutTime,
                       DateFormatter.formatDateTime(timestamp),
                     ),

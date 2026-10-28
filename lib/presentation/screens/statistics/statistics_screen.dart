@@ -5,6 +5,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../core/widgets/shimmer_loading.dart';
+import '../../../core/widgets/theme_toggle_button.dart';
 import '../../../logic/blocs/visitor/visitor_bloc.dart';
 import '../../../logic/blocs/visitor/visitor_state.dart';
 
@@ -65,6 +66,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           ? AppBar(
               title: const Text(AppConstants.titleStatistics),
               centerTitle: true,
+              actions: const [
+                ThemeToggleButton(),
+              ],
             )
           : null,
       body: BlocBuilder<VisitorBloc, VisitorState>(

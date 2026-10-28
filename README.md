@@ -205,17 +205,39 @@ The application integrates with a cloud-hosted REST API backed by an offline-fir
 
 ## 8. Screenshots
 
-Screenshots representing the key application workflows:
+Visual overview of the key screens and workflows in the Visitor Management application:
 
-| Screen | Description | File |
+### Dashboard & Analytics
+
+| Dashboard Overview | Visitor Statistics |
+| :---: | :---: |
+| <img src="screenshots/01_dashboard.png" width="350" alt="Dashboard Screen" /> | <img src="screenshots/06_visitor_statistics.png" width="350" alt="Visitor Statistics Screen" /> |
+| **Dashboard Screen**<br>Live counters (Total Today, Checked In, Checked Out), date selector, and quick action shortcuts | **Visitor Statistics Screen**<br>Weekly Monday–Sunday check-in/out bar chart and visitor type donut breakdown |
+
+### Visitor Management & Passes
+
+| Visitor List | Visitor Registration | Visitor Details & QR Pass |
+| :---: | :---: | :---: |
+| <img src="screenshots/02_visitor_list.png" width="240" alt="Visitor List Screen" /> | <img src="screenshots/03_visitor_registration.png" width="240" alt="Visitor Registration Screen" /> | <img src="screenshots/04_visitor_details_qr.png" width="240" alt="Visitor Details & QR Code Screen" /> |
+| **Visitor List**<br>Searchable directory by name/mobile, project & type tags, status badges, and edit/delete actions | **Visitor Registration**<br>Validated form inputs (10-digit mobile, email format, dropdowns) | **Visitor Details & QR Code**<br>Full visitor profile, scannable QR badge, and instant check-in/out |
+
+### QR Code Scanning & Verification Workflow
+
+| Active Camera Scanner | Invalid QR Code Alert | Scanned Visitor Information |
+| :---: | :---: | :---: |
+| <img src="screenshots/05_qr_scanner.png" width="240" alt="Camera QR Scanner" /> | <img src="screenshots/05_qr_invalid_dialog.png" width="240" alt="Invalid QR Alert Dialog" /> | <img src="screenshots/05_scanned_visitor_info.png" width="240" alt="Scanned Visitor Information" /> |
+| **Real-Time Camera Scanner**<br>Camera viewfinder with alignment frame, flash toggle, and manual ID fallback | **Invalid QR Validation**<br>Security check rejecting unrecognized passes with a clear alert message | **Extracted Visitor Information**<br>Extracted Visitor ID, live status, full profile, and Check In / Check Out actions |
+
+| Screen | Description | File Path |
 | :--- | :--- | :--- |
-| **Dashboard** | Overview counters (Total Today, Checked In, Checked Out) and quick action buttons | `screenshots/01_dashboard.png` |
-| **Visitor List** | Searchable and filterable visitor directory with status chips | `screenshots/02_visitor_list.png` |
-| **Visitor Registration** | Form with field validation for mobile number, visitor category, and project | `screenshots/03_visitor_registration.png` |
-| **Visitor Details & QR Code** | Full visitor profile, downloadable QR pass, and visit timestamps | `screenshots/04_visitor_details_qr.png` |
-| **QR Scanner** | Real-time camera viewfinder with frame overlay and extracted visitor info card | `screenshots/05_qr_scanner.png` |
-
-*(Place PNG screenshots in the `screenshots/` directory matching the filenames above for documentation rendering).*
+| **Dashboard** | Overview counters (Total Today, Checked In, Checked Out), date picker, and quick actions | [`screenshots/01_dashboard.png`](screenshots/01_dashboard.png) |
+| **Visitor List** | Searchable and filterable visitor directory with status chips and quick actions | [`screenshots/02_visitor_list.png`](screenshots/02_visitor_list.png) |
+| **Visitor Registration** | Form with field validation for mobile number, email, visitor type, and project | [`screenshots/03_visitor_registration.png`](screenshots/03_visitor_registration.png) |
+| **Visitor Details & QR Code** | Full visitor profile, downloadable QR pass, and check-in/out timestamps | [`screenshots/04_visitor_details_qr.png`](screenshots/04_visitor_details_qr.png) |
+| **QR Scanner (Live)** | Real-time camera viewfinder scanning visitor badge passes | [`screenshots/05_qr_scanner.png`](screenshots/05_qr_scanner.png) |
+| **QR Scanner (Validation Alert)** | Validation dialog alerting guard when an unregistered QR code is scanned | [`screenshots/05_qr_invalid_dialog.png`](screenshots/05_qr_invalid_dialog.png) |
+| **Scanned Visitor Information** | Extracted visitor ID banner, status badge, full details, and one-tap check in/out | [`screenshots/05_scanned_visitor_info.png`](screenshots/05_scanned_visitor_info.png) |
+| **Visitor Statistics** | Weekly activity bar chart (Checked In vs. Checked Out) and visitor category donut chart | [`screenshots/06_visitor_statistics.png`](screenshots/06_visitor_statistics.png) |
 
 ---
 

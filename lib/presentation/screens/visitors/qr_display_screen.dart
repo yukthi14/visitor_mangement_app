@@ -167,8 +167,10 @@ class _QRDisplayScreenState extends State<QRDisplayScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = AppColors.isDark(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.backgroundColor(context),
       appBar: AppBar(
         title: const Text(AppConstants.titleVisitorQRCode),
         leading: IconButton(
@@ -188,9 +190,9 @@ class _QRDisplayScreenState extends State<QRDisplayScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
                   decoration: BoxDecoration(
-                    color: AppColors.white,
+                    color: AppColors.cardBgColor(context),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(color: AppColors.borderColor(context)),
                     boxShadow: const [
                       BoxShadow(
                         color: AppColors.blackOpacity04,
@@ -211,18 +213,18 @@ class _QRDisplayScreenState extends State<QRDisplayScreen> {
                             children: [
                               Text(
                                 widget.visitor.name,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                  color: AppColors.textPrimaryColor(context),
                                 ),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 widget.visitor.project,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 13,
-                                  color: AppColors.textSecondary,
+                                  color: AppColors.textSecondaryColor(context),
                                 ),
                               ),
                             ],
@@ -231,10 +233,10 @@ class _QRDisplayScreenState extends State<QRDisplayScreen> {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      const Divider(height: 1, color: AppColors.divider),
+                      Divider(height: 1, color: AppColors.dividerColor(context)),
                       const SizedBox(height: 20),
 
-                      // High quality QR code
+                      // High quality QR code (white container background ensures contrast for scanners)
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Container(
@@ -251,30 +253,30 @@ class _QRDisplayScreenState extends State<QRDisplayScreen> {
                       const SizedBox(height: 16),
 
                       // Visitor ID label & code
-                      const Text(
+                      Text(
                         AppConstants.labelVisitorId,
                         style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.textSecondary,
+                          color: AppColors.textSecondaryColor(context),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         widget.visitor.id,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: AppColors.textPrimaryColor(context),
                           letterSpacing: 0.5,
                         ),
                       ),
                       const SizedBox(height: 6),
                       Text(
                         '${AppConstants.labelPurpose}: ${widget.visitor.purpose}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.textMuted,
+                          color: AppColors.textMutedColor(context),
                         ),
                       ),
                     ],
@@ -290,26 +292,28 @@ class _QRDisplayScreenState extends State<QRDisplayScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   decoration: BoxDecoration(
-                    color: AppColors.statusCheckedInBg,
+                    color: isDark ? AppColors.metricGreenBgDark : AppColors.statusCheckedInBg,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: AppColors.statusCheckedInText.withValues(alpha: 0.3),
+                      color: isDark
+                          ? AppColors.metricGreenBorderDark
+                          : AppColors.statusCheckedInText.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.check_circle,
                         size: 16,
-                        color: AppColors.statusCheckedInText,
+                        color: isDark ? AppColors.metricGreenTextDark : AppColors.statusCheckedInText,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           '${AppConstants.qrSavedPrefix} $savedPath',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
-                            color: AppColors.statusCheckedInText,
+                            color: isDark ? AppColors.metricGreenTextDark : AppColors.statusCheckedInText,
                             fontWeight: FontWeight.w600,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -352,11 +356,11 @@ class _QRDisplayScreenState extends State<QRDisplayScreen> {
               ),
 
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 AppConstants.qrSecurityNotice,
                 style: TextStyle(
                   fontSize: 13,
-                  color: AppColors.textSecondary,
+                  color: AppColors.textSecondaryColor(context),
                 ),
                 textAlign: TextAlign.center,
               ),

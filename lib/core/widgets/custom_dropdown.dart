@@ -31,10 +31,10 @@ class CustomDropdown<T> extends StatelessWidget {
         RichText(
           text: TextSpan(
             text: label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: AppColors.textPrimaryColor(context),
             ),
             children: [
               if (isRequired)
@@ -51,17 +51,22 @@ class CustomDropdown<T> extends StatelessWidget {
         const SizedBox(height: 8),
         DropdownButtonFormField<T>(
           initialValue: value,
-          icon: const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.textSecondary),
+          icon: Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.textSecondaryColor(context)),
           isExpanded: true,
+          dropdownColor: AppColors.surfaceColor(context),
+          style: TextStyle(
+            fontSize: 15,
+            color: AppColors.textPrimaryColor(context),
+          ),
           decoration: InputDecoration(
             hintText: hintText,
             filled: true,
-            fillColor: AppColors.white,
+            fillColor: AppColors.inputFillColor(context),
           ),
           hint: Text(
             hintText,
-            style: const TextStyle(
-              color: AppColors.textMuted,
+            style: TextStyle(
+              color: AppColors.textMutedColor(context),
               fontSize: 14,
             ),
           ),
@@ -70,9 +75,9 @@ class CustomDropdown<T> extends StatelessWidget {
               value: item,
               child: Text(
                 itemLabelBuilder(item),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 15,
-                  color: AppColors.textPrimary,
+                  color: AppColors.textPrimaryColor(context),
                 ),
               ),
             );
