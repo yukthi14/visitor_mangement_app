@@ -17,7 +17,7 @@ class QRScannerScreen extends StatefulWidget {
   State<QRScannerScreen> createState() => _QRScannerScreenState();
 }
 
-class _QRScannerScreenState extends State<QRScannerScreen> {
+class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObserver {
   final MobileScannerController _controller = MobileScannerController(
     detectionSpeed: DetectionSpeed.normal,
     facing: CameraFacing.back,
@@ -28,9 +28,25 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
   bool _isFlashOn = false;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      if (!_controller.value.isRunning) {
+        _controller.start();
+      }
+    }
   }
 
   void _onDetect(BarcodeCapture capture) {
@@ -219,34 +235,67 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
               controller: _controller,
               onDetect: _onDetect,
               errorBuilder: (context, error, child) {
+                final isPermission = error.errorCode == MobileScannerErrorCode.permissionDenied;
                 return Center(
                   child: Padding(
                     padding: const EdgeInsets.all(24),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.camera_alt_outlined, color: AppColors.whiteOpacity54, size: 64),
+                        Icon(
+                          isPermission ? Icons.no_photography_outlined : Icons.camera_alt_outlined,
+                          color: AppColors.whiteOpacity54,
+                          size: 64,
+                        ),
                         const SizedBox(height: 16),
-                        const Text(
-                          AppConstants.titleCameraUnavailable,
+                        Text(
+                          isPermission ? 'Camera Permission Required' : 'Camera Unavailable',
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            color: AppColors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         const SizedBox(height: 8),
-                        const Text(
-                          AppConstants.cameraPermissionNotice,
+                        Text(
+                          isPermission
+                              ? 'Camera permission was denied. Please grant camera access in app settings.'
+                              : (error.errorDetails?.toString() ?? AppConstants.cameraPermissionNotice),
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: AppColors.whiteOpacity70, fontSize: 13),
+                          style: const TextStyle(
+                            color: AppColors.whiteOpacity70,
+                            fontSize: 13,
+                          ),
                         ),
                         const SizedBox(height: 20),
-                        ElevatedButton.icon(
-                          onPressed: _showManualInputDialog,
-                          icon: const Icon(Icons.keyboard),
-                          label: const Text(AppConstants.enterVisitorIdManually),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: AppColors.white,
-                          ),
+                        Wrap(
+                          spacing: 12,
+                          runSpacing: 10,
+                          alignment: WrapAlignment.center,
+                          children: [
+                            OutlinedButton.icon(
+                              onPressed: () async {
+                                try {
+                                  await _controller.start();
+                                } catch (_) {}
+                              },
+                              icon: const Icon(Icons.refresh_rounded, color: AppColors.white),
+                              label: const Text('Retry Camera', style: TextStyle(color: AppColors.white)),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: AppColors.whiteOpacity54),
+                              ),
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: _showManualInputDialog,
+                              icon: const Icon(Icons.keyboard),
+                              label: const Text(AppConstants.enterVisitorIdManually),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                foregroundColor: AppColors.white,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
