@@ -84,15 +84,24 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
 
         final isSubmitting = state is VisitorLoaded && state.isSubmitting;
 
-        return Scaffold(
-          backgroundColor: AppColors.backgroundColor(context),
-          appBar: AppBar(
-            backgroundColor: AppColors.surfaceColor(context),
-            elevation: 0,
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: AppColors.textPrimaryColor(context)),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
+        return PopScope(
+          onPopInvokedWithResult: (didPop, result) {
+            if (didPop) {
+              context.read<VisitorBloc>().add(const ClearSelectedVisitor());
+            }
+          },
+          child: Scaffold(
+            backgroundColor: AppColors.backgroundColor(context),
+            appBar: AppBar(
+              backgroundColor: AppColors.surfaceColor(context),
+              elevation: 0,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back, color: AppColors.textPrimaryColor(context)),
+                onPressed: () {
+                  context.read<VisitorBloc>().add(const ClearSelectedVisitor());
+                  Navigator.of(context).pop();
+                },
+              ),
             title: Text(
               AppConstants.titleVisitorInfo,
               style: TextStyle(
@@ -303,8 +312,9 @@ class ScannedVisitorInfoScreen extends StatelessWidget {
               ),
             ),
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
 }

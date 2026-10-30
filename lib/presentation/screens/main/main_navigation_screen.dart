@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../logic/blocs/visitor/visitor_bloc.dart';
+import '../../../logic/blocs/visitor/visitor_event.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../scanner/qr_scanner_screen.dart';
 import '../statistics/statistics_screen.dart';
@@ -17,9 +20,14 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
 
   void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+    if (_currentIndex != index) {
+      if (_currentIndex == 2 || index == 2) {
+        context.read<VisitorBloc>().add(const ClearSelectedVisitor());
+      }
+      setState(() {
+        _currentIndex = index;
+      });
+    }
   }
 
   @override
@@ -27,7 +35,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     final List<Widget> screens = [
       DashboardScreen(onNavigateToTab: _onTabTapped),
       const VisitorListScreen(showAppBar: true),
-      const QRScannerScreen(isStandalone: false),
+      QRScannerScreen(
+        isStandalone: false,
+        isActive: _currentIndex == 2,
+      ),
       const StatisticsScreen(showAppBar: true),
     ];
 

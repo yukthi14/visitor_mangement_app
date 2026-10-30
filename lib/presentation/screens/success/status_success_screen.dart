@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../data/models/visitor_model.dart';
+import '../../../logic/blocs/visitor/visitor_bloc.dart';
+import '../../../logic/blocs/visitor/visitor_event.dart';
 
 class StatusSuccessScreen extends StatelessWidget {
   final VisitorModel visitor;
@@ -50,14 +53,20 @@ class StatusSuccessScreen extends StatelessWidget {
         ? (visitor.checkInTime ?? DateFormatter.currentIsoTimestamp())
         : (visitor.checkOutTime ?? DateFormatter.currentIsoTimestamp());
 
-    return Scaffold(
-      backgroundColor: AppColors.backgroundColor(context),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-          child: Column(
-            children: [
-              const Spacer(flex: 2),
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          context.read<VisitorBloc>().add(const ClearSelectedVisitor());
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.backgroundColor(context),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            child: Column(
+              children: [
+                const Spacer(flex: 2),
 
               // Green Check Circle
               Container(
@@ -143,6 +152,7 @@ class StatusSuccessScreen extends StatelessWidget {
               CustomButton(
                 text: AppConstants.ok,
                 onPressed: () {
+                  context.read<VisitorBloc>().add(const ClearSelectedVisitor());
                   Navigator.of(context).pop();
                 },
               ),
@@ -151,6 +161,7 @@ class StatusSuccessScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

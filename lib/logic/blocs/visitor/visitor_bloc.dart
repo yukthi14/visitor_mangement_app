@@ -383,48 +383,63 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
       if (visitorId == null) {
         emit(loaded.copyWith(
           clearScannedVisitor: true,
+          clearSuccessMessage: true,
           errorMessage: AppConstants.invalidQRMessage,
+          operationType: 'scan_error',
         ));
         return;
       }
 
+      // Reset previous scanned visitor and error so Equatable detects the state transition
+      emit(loaded.copyWith(
+        clearScannedVisitor: true,
+        clearErrorMessage: true,
+        clearSuccessMessage: true,
+        operationType: 'scan_loading',
+      ));
+
       // Retrieve visitor details from the API / repository
       try {
         final lookedUp = await repository.getVisitorById(visitorId);
+        final currentLoaded = state is VisitorLoaded ? (state as VisitorLoaded) : loaded;
         if (lookedUp != null) {
           // Synchronize with local state list
-          final existingIndex = loaded.allVisitors.indexWhere((v) => v.id.toLowerCase() == lookedUp.id.toLowerCase());
+          final existingIndex = currentLoaded.allVisitors.indexWhere((v) => v.id.toLowerCase() == lookedUp.id.toLowerCase());
           List<VisitorModel> updatedList;
           if (existingIndex >= 0) {
-            updatedList = List<VisitorModel>.from(loaded.allVisitors)..[existingIndex] = lookedUp;
+            updatedList = List<VisitorModel>.from(currentLoaded.allVisitors)..[existingIndex] = lookedUp;
           } else {
-            updatedList = [lookedUp, ...loaded.allVisitors];
+            updatedList = [lookedUp, ...currentLoaded.allVisitors];
           }
 
           final filtered = _applyFilters(
             list: updatedList,
-            query: loaded.searchQuery,
-            project: loaded.selectedProject,
-            status: loaded.selectedStatus,
+            query: currentLoaded.searchQuery,
+            project: currentLoaded.selectedProject,
+            status: currentLoaded.selectedStatus,
           );
 
-          emit(loaded.copyWith(
+          emit(currentLoaded.copyWith(
             allVisitors: updatedList,
             filteredVisitors: filtered,
             scannedVisitor: lookedUp,
             selectedVisitor: lookedUp,
             clearErrorMessage: true,
+            operationType: 'scan_success',
           ));
         } else {
-          emit(loaded.copyWith(
+          emit(currentLoaded.copyWith(
             clearScannedVisitor: true,
             errorMessage: 'No visitor found with ID "$visitorId". Please scan a valid visitor pass.',
+            operationType: 'scan_error',
           ));
         }
       } catch (e) {
-        emit(loaded.copyWith(
+        final currentLoaded = state is VisitorLoaded ? (state as VisitorLoaded) : loaded;
+        emit(currentLoaded.copyWith(
           clearScannedVisitor: true,
           errorMessage: 'Failed to retrieve visitor details: ${e.toString()}',
+          operationType: 'scan_error',
         ));
       }
     }
@@ -444,6 +459,9 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
       emit((state as VisitorLoaded).copyWith(
         clearSelectedVisitor: true,
         clearScannedVisitor: true,
+        clearErrorMessage: true,
+        clearSuccessMessage: true,
+        operationType: '',
       ));
     }
   }

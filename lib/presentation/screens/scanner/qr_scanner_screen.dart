@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../data/models/visitor_model.dart';
 import '../../../logic/blocs/visitor/visitor_bloc.dart';
 import '../../../logic/blocs/visitor/visitor_event.dart';
 import '../../../logic/blocs/visitor/visitor_state.dart';
@@ -10,8 +12,13 @@ import 'scanned_visitor_info_screen.dart';
 
 class QRScannerScreen extends StatefulWidget {
   final bool isStandalone;
+  final bool isActive;
 
-  const QRScannerScreen({super.key, this.isStandalone = false});
+  const QRScannerScreen({
+    super.key,
+    this.isStandalone = false,
+    this.isActive = true,
+  });
 
   @override
   State<QRScannerScreen> createState() => _QRScannerScreenState();
@@ -26,16 +33,52 @@ class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingOb
 
   bool _isProcessing = false;
   bool _isFlashOn = false;
+  Timer? _processingTimeout;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          _isProcessing = false;
+        });
+        context.read<VisitorBloc>().add(const ClearSelectedVisitor());
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(QRScannerScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.isActive != widget.isActive) {
+      if (widget.isActive) {
+        setState(() {
+          _isProcessing = false;
+        });
+        context.read<VisitorBloc>().add(const ClearSelectedVisitor());
+        if (!_controller.value.isRunning) {
+          _controller.start();
+        }
+      } else {
+        _processingTimeout?.cancel();
+        if (_isProcessing) {
+          setState(() {
+            _isProcessing = false;
+          });
+        }
+        if (_controller.value.isRunning) {
+          _controller.stop();
+        }
+      }
+    }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _processingTimeout?.cancel();
     _controller.dispose();
     super.dispose();
   }
@@ -43,14 +86,14 @@ class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingOb
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      if (!_controller.value.isRunning) {
+      if (widget.isActive && !_controller.value.isRunning) {
         _controller.start();
       }
     }
   }
 
   void _onDetect(BarcodeCapture capture) {
-    if (_isProcessing) return;
+    if (_isProcessing || !widget.isActive) return;
 
     final List<Barcode> barcodes = capture.barcodes;
     if (barcodes.isEmpty) return;
@@ -62,8 +105,19 @@ class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingOb
   }
 
   void _handleScannedValue(String visitorId) {
+    if (!mounted) return;
     setState(() {
       _isProcessing = true;
+    });
+
+    _processingTimeout?.cancel();
+    _processingTimeout = Timer(const Duration(seconds: 8), () {
+      if (mounted && _isProcessing) {
+        setState(() {
+          _isProcessing = false;
+        });
+        context.read<VisitorBloc>().add(const ClearSelectedVisitor());
+      }
     });
 
     final bloc = context.read<VisitorBloc>();
@@ -124,9 +178,12 @@ class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingOb
             ),
             onPressed: () {
               Navigator.of(ctx).pop();
-              setState(() {
-                _isProcessing = false;
-              });
+              if (mounted) {
+                setState(() {
+                  _isProcessing = false;
+                });
+                context.read<VisitorBloc>().add(const ClearSelectedVisitor());
+              }
             },
             child: const Text(AppConstants.scanAgain),
           ),
@@ -170,22 +227,47 @@ class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingOb
     );
   }
 
+  Future<void> _navigateToScannedVisitor(VisitorModel visitor) async {
+    setState(() {
+      _isProcessing = false;
+    });
+
+    try {
+      await _controller.stop();
+    } catch (_) {}
+
+    if (!mounted) return;
+
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ScannedVisitorInfoScreen(visitor: visitor),
+      ),
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      _isProcessing = false;
+    });
+    context.read<VisitorBloc>().add(const ClearSelectedVisitor());
+    if (widget.isActive) {
+      try {
+        await _controller.start();
+      } catch (_) {}
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<VisitorBloc, VisitorState>(
       listener: (context, state) {
         if (state is VisitorLoaded) {
           if (state.errorMessage != null && state.errorMessage!.isNotEmpty && _isProcessing) {
+            _processingTimeout?.cancel();
             _showInvalidQrDialog(state.errorMessage!);
           } else if (state.scannedVisitor != null && _isProcessing) {
-            setState(() {
-              _isProcessing = false;
-            });
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => ScannedVisitorInfoScreen(visitor: state.scannedVisitor!),
-              ),
-            );
+            _processingTimeout?.cancel();
+            _navigateToScannedVisitor(state.scannedVisitor!);
           }
         }
       },
